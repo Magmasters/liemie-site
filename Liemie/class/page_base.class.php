@@ -243,25 +243,24 @@ class page_base {
 <body>
 	<div class="global container-fluid">
 
-						<?php $this->affiche_entete(); ?>
-						<?php $this->affiche_entete_menu(); ?>
-						<?php $this->affiche_menu(); ?>
-						<?php $this->affiche_menu_connexion(); ?>
-						<?php $this->affiche_footer_menu(); ?>
+		<?php $this->affiche_entete(); ?>
+		<?php $this->affiche_entete_menu(); ?>
+		<?php $this->affiche_menu(); ?>
+		<?php $this->affiche_menu_connexion(); ?>
+		<?php $this->affiche_footer_menu(); ?>
 						
-						<div class="row">
-			<div class="col-md-9">
-								<?php echo $this->left_sidebar; ?>
-							</div>
-			<div class="row">
-				<div class="col-md-3">
-								<?php echo $this->right_sidebar;?>
-								</div>
+		<div class="row">
+			<div class="col-md-10">
+				<?php echo $this->left_sidebar; ?>
+			</div>
+		<div class="row">
+			<div class="col-md-2">
+				<?php echo $this->right_sidebar;?>
 			</div>
 		</div>
-
-						<?php $this->affiche_footer(); ?>
-					</div>
+		</div>
+		<?php $this->affiche_footer(); ?>
+	</div>
 </body>
 </html>
 <?php

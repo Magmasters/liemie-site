@@ -18,7 +18,11 @@ if (isset ( $_SESSION ['email'] ) && isset ( $_SESSION ['type'] )) {
 $controleur = new controleur ();
 
 $site->loginbar = $controleur->retourne_formulaire_login ();
-$site->right_sidebar = $site->rempli_right_sidebar ();
+if ($_SESSION ['type'] == 'infirmier') {
+	$site->right_sidebar = $controleur->affiche_infos_infirmier();
+} else {
+	$site->right_sidebar = $site->rempli_right_sidebar ();
+}
 $site->left_sidebar = $controleur->retourne_article_accueil ();
 
 $site->affiche ();

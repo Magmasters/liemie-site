@@ -30,4 +30,5 @@ class page_base_securisee_infirmier extends page_base {
 </ul>
 <?php
 	}
+	
 }
