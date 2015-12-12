@@ -27,6 +27,12 @@ class controleur {
 			<h1>L\'Equipe</h1>
 		</article>';
 	}
+	public function retourne_temoignage() {
+		return '
+		<article>
+			<h1>Témoignages</h1>
+		</article>';
+	}
 	public function retourne_article_accueil() {
 		// $retour = $this->retourne_carroussel_bootstrap();
 		$retour = '
@@ -677,16 +683,21 @@ class controleur {
 	
 	public function affiche_infos_infirmier()
 	{
+		$tab = array();
+		$tab['email'] = $_SESSION['email'];
+		$tab_infirmier = $this->vpdo->retourne_infos_infirmier($tab);
 		$retour = '
-			<div class="row placeholders">
-				<div class="col-xs-6 col-sm-3 placeholder">
-					<img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-					<h4>Label</h4>
-					<span class="text-muted">Something else</span>
+			<h3 class="profile-title"> Mon profil </h3>
+	        <div class="profile-header-container">
+	    		<div class="profile-header-img">
+	                <img class="img-circle" src="./image/logo.jpg" />
+	                <!-- badge -->
+	                <div class="rank-label-container">
+	                    <span class="label label-default rank-label">'.$tab_infirmier[nom].'</span>
+	                </div>
 	            </div>
-			</div>
+	        </div>
 				';
-		
 		return $retour;
 	}
 }

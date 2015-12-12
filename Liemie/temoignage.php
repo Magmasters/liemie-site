@@ -14,7 +14,7 @@ if (isset ( $_SESSION ['email'] ) && isset ( $_SESSION ['type'] )) {
 
 $controleur = new controleur ();
 $site->right_sidebar = $site->rempli_right_sidebar ();
-$site->left_sidebar = $controleur->retourne_equipe ();
+$site->left_sidebar = $controleur->retourne_temoignage ();
 
 $site->affiche ();
 ?>
