@@ -1,7 +1,7 @@
 <?php
 include_once ('../class/autoload.php');
 
-//Connexion BDD
+//Test commit
 $mypdo = new mypdo ();
 
 $table = $_GET ['table'];
