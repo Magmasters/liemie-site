@@ -219,7 +219,7 @@ class controleur {
 		// retourner le résultat final
 		return $mdp;
 	}
-	public function retourne_formulaire_famille($type, $idfamille = "") {
+	public function retourne_formulaire_infirmier($type, $idinfirmier = "") {
 		$form = '';
 		$identifiant = '';
 		$nom1 = '';
@@ -252,11 +252,11 @@ class controleur {
 		$autre2 = '';
 		
 		if ($type == 'Ajout') {
-			$titreform = 'Formulaire ajout famille';
+			$titreform = 'Formulaire ajout infirmier';
 			$libelbutton = 'Ajouter';
 		}
 		if ($type == 'Demand') {
-			$titreform = 'Formulaire Demande Inscription famille';
+			$titreform = 'Formulaire Demande Inscription infirmier';
 			$libelbutton = 'Soumettre';
 		}
 		if ($type == 'Supp') {
@@ -264,11 +264,11 @@ class controleur {
 			$libelbutton = 'Supprimer';
 		}
 		if ($type == 'Modif') {
-			$titreform = 'Formulaire Modification famille';
+			$titreform = 'Formulaire Modification infirmier';
 			$libelbutton = 'Modifier';
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
-			$row = $this->vpdo->trouve_famille ( $idfamille );
+			$row = $this->vpdo->trouve_famille ( $idinfirmier);
 			if ($row != null) {
 				$identifiant = $row->identifiant;
 				$nom1 = $row->nom1;
