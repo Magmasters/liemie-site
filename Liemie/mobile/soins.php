@@ -1,6 +1,7 @@
 <?php
 include_once ('../class/autoload.php');
 
+//Connexion BDD
 $mypdo = new mypdo ();
 
 $table = $_GET ['table'];
