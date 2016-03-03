@@ -30,8 +30,8 @@ class page_base_securisee_admin extends page_base {
 
 			<li class="dropdown dropdown-submenu"><a href="#">Famille</a>
 				<ul class="dropdown-menu">
-					<li><a href="ajout_famille.php">Inscrire une famille</a></li>
-					<li><a href="modif_famille.php">Modifier une famille</a></li>
+					<li><a href="ajout_infirmier.php">Inscrire un infirmier</a></li>
+					<li><a href="modif_infirmier.php">Modifier un infirmier</a></li>
 					<li><a href="">Supprimer une famille</a></li>
 					<li><a href="">Choisir une famille</a></li>
 				</ul></li>
