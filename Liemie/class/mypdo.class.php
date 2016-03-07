@@ -128,5 +128,26 @@ class mypdo extends PDO {
 		
 		return $tab_infirmier;
 	}
+	
+	public function ajouter_infirmier($tab)
+	{
+		$statement = 'INSERT INTO INFIRMIER (NOM, PRENOM, DATE_NAISSANCE, EMAIL, MDP) VALUES (:nom, :prenom, :date_naiss, :email, :mdp)';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':nom', $tab['nom'], PDO::PARAM_STR);
+		$sth->bindParam(':prenom', $tab['prenom'], PDO::PARAM_STR);
+		$sth->bindParam(':date_naiss', $tab['date_naiss'], PDO::PARAM_STR);
+		$sth->bindParam(':email', $tab['email'], PDO::PARAM_STR);
+		$sth->bindParam(':mdp', $tab['mdp'], PDO::PARAM_STR);
+		
+		/*
+		 * Requête passée avec succés, infirmier ajouté
+		 */
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
+	}
 }
 ?>

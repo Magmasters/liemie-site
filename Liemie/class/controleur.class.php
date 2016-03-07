@@ -368,6 +368,7 @@ class controleur {
 		$form = $form . ' 
 					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom1 . '" required/>
 					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom1 . '" required/></br>
+					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $prenom1 . '" required/></br>
 					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
 					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
 					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
