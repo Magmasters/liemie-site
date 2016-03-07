@@ -409,7 +409,7 @@ class controleur {
         e.preventDefault();
 		$("#modal").hide();
 	
-		var $url="ajax/valide_ajout_famille.php";
+		var $url="ajax/valide_ajout_infirmier.php";
 		if($("#submit").prop("value")=="Modifier"){$url="ajax/valide_modif_famille.php";}
 		if($("#submit").prop("value")=="Supprimer"){$url="ajax/valide_supp_famille.php";}
 		if($("#submit").prop("value")=="Soumettre"){$url="ajax/valide_demand_famille.php";}
