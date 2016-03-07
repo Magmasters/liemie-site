@@ -415,39 +415,19 @@ class controleur {
 		if($("#submit").prop("value")=="Soumettre"){$url="ajax/valide_demand_famille.php";}
 		if($("#formfamille").valid())
 		{
-			$fonction1="pere";
-			if($("input[type=radio][name=rbfonction1]:checked").attr("value")=="rbp"){$fonction1="pere";}
-			if($("input[type=radio][name=rbfonction1]:checked").attr("value")=="rbm"){$fonction1="mere";}
-			if($("input[type=radio][name=rbfonction1]:checked").attr("value")=="rba"){$fonction1=$("#fonction1").val();}
-			$fonction2="";
-			if($("input[type=radio][name=rbfonction2]:checked").attr("value")=="rbp"){$fonction2="pere";}
-			if($("input[type=radio][name=rbfonction2]:checked").attr("value")=="rbm"){$fonction2="mere";}
-			if($("input[type=radio][name=rbfonction2]:checked").attr("value")=="rba"){$fonction2=$("#fonction2").val();}
 			var formData = {
-			"identifiant"			: $("#identifiant").val(),
-			"mp"					: $("#mp").val(),
-			"nom1" 					: $("#nom1").val().toUpperCase(),
-   			"prenom1"				: $("#prenom1").val(),
-			"adresse11"				: $("#adresse11").val(),
-			"adresse12"				: $("#adresse12").val(),
-			"cp1"					: $("#cp1").val(),
-			"ville1"				: $("#ville1").val(),
-			"mail1"					: $("#mail1").val(),
-			"tel11"					: $("#tel11").val(),
-			"tel12"					: $("#tel12").val(),
-			"tel13"					: $("#tel13").val(),
-   			"fonction1"				: $fonction1,
-			"nom2" 					: $("#nom2").val().toUpperCase(),
-   			"prenom2"				: $("#prenom2").val(),
-			"adresse21"				: $("#adresse21").val(),
-			"adresse22"				: $("#adresse22").val(),
-			"cp2"					: $("#cp2").val(),
-			"ville2"				: $("#ville2").val(),
-			"mail2"					: $("#mail2").val(),
-			"tel21"					: $("#tel21").val(),
-			"tel22"					: $("#tel22").val(),
-			"tel23"					: $("#tel23").val(),
-   			"fonction2"				: $fonction2
+				"identifiant"			: $("#identifiant").val(),
+				"mp"					: $("#mp").val(),
+				"nom1" 					: $("#nom").val().toUpperCase(),
+				"prenom1"				: $("#prenom").val(),
+				"adresse11"				: $("#adresse1").val(),
+				"adresse12"				: $("#adresse2").val(),
+				"cp1"					: $("#cp").val(),
+				"ville1"				: $("#ville").val(),
+				"mail1"					: $("#mail").val(),
+				"tel11"					: $("#tel1").val(),
+				"tel12"					: $("#tel2").val(),
+				"tel13"					: $("#tel3").val(),
 			};
 				
 			var filterDataRequest = $.ajax(
