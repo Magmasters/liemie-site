@@ -11,7 +11,7 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	$tab = array ();
 	$mypdo = new mypdo ();
 
-	$tab ['identifiant'] = $_POST ['identifiant'];
+	$tab ['email'] = $_POST ['email'];
 	$tab ['mdp'] = md5 ( $_POST ['mp'] );
 	$tab ['nom'] = $_POST ['nom'];
 	$tab ['prenom'] = $_POST ['prenom'];
@@ -40,7 +40,7 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 		$data ['errors'] = $errors;
 	} else {
 		if ($data ['success']) {
-			$data ['message'] = "Infirmier ajouté avec succés !";
+			$data ['message'] = "Infirmier ajouté avec succés, identifiant (email) : ". $_POST['email']." !";
 		}
 	}
 } else {

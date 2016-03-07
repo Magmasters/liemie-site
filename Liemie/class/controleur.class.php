@@ -221,35 +221,17 @@ class controleur {
 	}
 	public function retourne_formulaire_infirmier($type, $idinfirmier = "") {
 		$form = '';
-		$identifiant = '';
-		$nom1 = '';
-		$prenom1 = '';
-		$adresse11 = '';
-		$adresse12 = '';
-		$cp1 = '';
-		$ville1 = '';
-		$mail1 = '';
-		$tel11 = '';
-		$tel12 = '';
-		$tel13 = '';
-		$checkpere1 = '';
-		$checkmere1 = '';
-		$checkautre1 = '';
-		$autre1 = '';
-		$nom2 = '';
-		$prenom2 = '';
-		$adresse21 = '';
-		$adresse22 = '';
-		$cp2 = '';
-		$ville2 = '';
-		$mail2 = '';
-		$tel21 = '';
-		$tel22 = '';
-		$tel23 = '';
-		$checkpere2 = '';
-		$checkmere2 = '';
-		$checkautre2 = '';
-		$autre2 = '';
+		$nom = '';
+		$prenom = '';
+		$date_naiss = '';
+		$adresse1 = '';
+		$adresse2 = '';
+		$cp = '';
+		$ville = '';
+		$mail = '';
+		$tel1 = '';
+		$tel2 = '';
+		$tel3 = '';
 		
 		if ($type == 'Ajout') {
 			$titreform = 'Formulaire ajout infirmier';
@@ -347,7 +329,7 @@ class controleur {
 		$form = '
 			<article >
 				<h3>' . $titreform . '</h3>
-				<form id="formfamille" method="post" >';
+				<form id="form_infirmier" method="post" >';
 		if ($type == 'Ajout' || $type == 'Demand') {
 			$vmp = $this->genererMDP ();
 			$form = $form . '
@@ -368,12 +350,12 @@ class controleur {
 		$form = $form . ' 
 					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom1 . '" required/>
 					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom1 . '" required/></br>
-					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $prenom1 . '" required/></br>
+					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $date_naiss . '" required/></br>
 					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
 					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
 					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
 					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville1 . '" required/></br>
-					<input type="text" name="mail" id="mail" placeholder="mail" value="' . $mail1 . '" required/></br>
+					<input type="text" name="mail_id" id="mail_id" placeholder="email" value="' . $mail1 . '" required/></br>
 					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel11 . '" required/>
 					<input type="text" name="tel2" id="tel1" placeholder="Tel portable" value="' . $tel12 . '" />
 					<input type="text" name="tel3" id="tel2" placeholder="Tel travail" value="' . $tel13 . '" /></br>
@@ -390,7 +372,7 @@ class controleur {
 	<script>
 	$("#modal").hide();
 	//Initialize the tooltips
-	$("#formfamille :input").tooltipster({
+	$("#form_infirmier :input").tooltipster({
 				         trigger: "custom",
 				         onlyOne: false,
 				         position: "bottom",
@@ -406,7 +388,7 @@ class controleur {
 			          return this.optional(element) || regexp.test(value);
 			   },"erreur champs non valide"
 			);
-	$("#formfamille").submit(function( e ){
+	$("#form_infirmier").submit(function( e ){
         e.preventDefault();
 		$("#modal").hide();
 	
@@ -414,21 +396,22 @@ class controleur {
 		if($("#submit").prop("value")=="Modifier"){$url="ajax/valide_modif_famille.php";}
 		if($("#submit").prop("value")=="Supprimer"){$url="ajax/valide_supp_famille.php";}
 		if($("#submit").prop("value")=="Soumettre"){$url="ajax/valide_demand_famille.php";}
-		if($("#formfamille").valid())
+		if($("#form_infirmier").valid())
 		{
+			/* Données du post */
 			var formData = {
-				"identifiant"			: $("#identifiant").val(),
 				"mp"					: $("#mp").val(),
-				"nom1" 					: $("#nom").val().toUpperCase(),
-				"prenom1"				: $("#prenom").val(),
-				"adresse11"				: $("#adresse1").val(),
-				"adresse12"				: $("#adresse2").val(),
-				"cp1"					: $("#cp").val(),
-				"ville1"				: $("#ville").val(),
-				"mail1"					: $("#mail").val(),
-				"tel11"					: $("#tel1").val(),
-				"tel12"					: $("#tel2").val(),
-				"tel13"					: $("#tel3").val(),
+				"nom" 					: $("#nom").val().toUpperCase(),
+				"prenom"				: $("#prenom").val(),
+				"adresse1"				: $("#adresse1").val(),
+				"adresse2"				: $("#adresse2").val(),
+				"cp"					: $("#cp").val(),
+				"ville"					: $("#ville").val(),
+				"email"					: $("#mail_id").val(),
+				"tel1"					: $("#tel1").val(),
+				"tel2"					: $("#tel2").val(),
+				"tel3"					: $("#tel3").val(),
+				"date_naiss"			: $("#date_naiss").val(),
 			};
 				
 			var filterDataRequest = $.ajax(
@@ -484,7 +467,7 @@ class controleur {
 		}
 	});
   
-	$("#formfamille").validate({
+	$("#form_infirmier").validate({
 		rules:
 		{
 							
