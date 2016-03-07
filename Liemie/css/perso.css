@@ -4,10 +4,10 @@
 /*****************/
 
 /* Page */
-.global {
+/*.global {
 	max-width: 1400px;
 	margin: 0 auto;
-}
+}*/
 
 [class*="col-"] {
 	border: 1px solid black;
@@ -16,7 +16,7 @@
 
 footer {
 	margin-top: 50px;
-	position: fixed;
+	position: relative;
 	bottom: 0;
 	left: 0;
 }
@@ -131,7 +131,7 @@ footer {
 	border: 0;
 }
 
-/* Profil utilisateur connecté*/
+/* Profil utilisateur connectÃ©*/
 /**
  * Profile image component
  */
