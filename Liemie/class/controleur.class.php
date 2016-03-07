@@ -352,7 +352,7 @@ class controleur {
 			$vmp = $this->genererMDP ();
 			$form = $form . '
 					<div >
-					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="Identifiant famille" value="' . $identifiant . '" required/></br>
+					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/></br>
 					Mot de passe : <input type="text" readonly name="mp" id="mp" value="' . $vmp . '"></br>
 					</div>
 					
@@ -360,28 +360,22 @@ class controleur {
 		} else {
 			$form = $form . '
 			<div style="visibility: hidden;">
-					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="Identifiant famille" value="' . $identifiant . '" required/></br>
+					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/></br>
 					Mot de passe : <input type="text"  name="mp" id="mp" value=""></br>
 					</div>
 							';
 		}
 		$form = $form . ' 
-					</br>Représentant légal 1</br></br>
-					<input type="text" name="nom1" id="nom1" placeholder="Nom representant legal 1" value="' . $nom1 . '" required/>
-					<input type="text" name="prenom1" id="prenom1" placeholder="Prenom representant legal 1" value="' . $prenom1 . '" required/></br>
-					<input type="text" name="adresse11" id="adresse11" placeholder="Adresse" value="' . $adresse11 . '" required/>
-					<input type="text" name="adresse12" id="adresse12" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
-					<input type="text" name="cp1" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
-					<input type="text" name="ville1" id="ville1" placeholder="Ville" value="' . $ville1 . '" required/></br>
-					<input type="text" name="mail1" id="mail1" placeholder="mail" value="' . $mail1 . '" required/></br>
-					<input type="text" name="tel11" id="tel11" placeholder="Tel fixe" value="' . $tel11 . '" required/>
-					<input type="text" name="tel12" id="tel12" placeholder="Tel portable" value="' . $tel12 . '" />
-					<input type="text" name="tel13" id="tel13" placeholder="Tel travail" value="' . $tel13 . '" /></br>
-					
-					<input type="radio" name="rbfonction1" id="rbp"  value="rbp" ' . $checkpere1 . ' required/>Père
-					<input type="radio" name="rbfonction1" id="rbm"  value="rbm" ' . $checkmere1 . 'required/>Mere
-					<input type="radio" name="rbfonction1" id="rba"  value="rba" ' . $checkautre1 . 'required/>Autre
-					<input type="text" name="fonction1" id="fonction1" placeholder="Fonction representant legal 1" value="' . $autre1 . '" /></br></br>
+					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom1 . '" required/>
+					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom1 . '" required/></br>
+					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
+					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
+					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
+					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville1 . '" required/></br>
+					<input type="text" name="mail" id="mail" placeholder="mail" value="' . $mail1 . '" required/></br>
+					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel11 . '" required/>
+					<input type="text" name="tel2" id="tel1" placeholder="Tel portable" value="' . $tel12 . '" />
+					<input type="text" name="tel3" id="tel2" placeholder="Tel travail" value="' . $tel13 . '" /></br>
 					
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
