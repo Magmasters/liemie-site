@@ -382,23 +382,7 @@ class controleur {
 					<input type="radio" name="rbfonction1" id="rbm"  value="rbm" ' . $checkmere1 . 'required/>Mere
 					<input type="radio" name="rbfonction1" id="rba"  value="rba" ' . $checkautre1 . 'required/>Autre
 					<input type="text" name="fonction1" id="fonction1" placeholder="Fonction representant legal 1" value="' . $autre1 . '" /></br></br>
-
-					Représentant légal 2</br></br>
-					<input type="text" name="nom2" id="nom2" placeholder="Nom representant legal 2" value="' . $nom2 . '" />
-					<input type="text" name="prenom2" id="prenom2" placeholder="Prenom representant legal 2" value="' . $prenom2 . '" /></br>
-					<input type="text" name="adresse21" id="adresse21" placeholder="Adresse" value="' . $adresse21 . '" />
-					<input type="text" name="adresse22" id="adresse22" placeholder="Complément Adresse" value="' . $adresse22 . '" /></br>
-					<input type="text" name="cp2" id="cp2" placeholder="Code Postal" value="' . $cp2 . '" />
-					<input type="text" name="ville2" id="ville2" placeholder="Ville" value="' . $ville2 . '" /></br>
-					<input type="text" name="mail2" id="mail2" placeholder="mail" value="' . $mail2 . '" /></br>
-					<input type="text" name="tel21" id="tel21" placeholder="Tel fixe" value="' . $tel21 . '" />
-					<input type="text" name="tel22" id="tel22" placeholder="Tel portable" value="' . $tel22 . '" />
-					<input type="text" name="tel23" id="tel23" placeholder="Tel travail" value="' . $tel23 . '" /></br>
 					
-					<input type="radio" name="rbfonction2" id="rbp"  value="rbp" ' . $checkpere2 . ' />Père
-					<input type="radio" name="rbfonction2" id="rbm"  value="rbm" ' . $checkmere2 . '/>Mere
-					<input type="radio" name="rbfonction2" id="rba"  value="rba" ' . $checkautre2 . '/>Autre
-					<input type="text" name="fonction2" id="fonction2" placeholder="Fonction representant legal 2" value="' . $autre2 . '" /></br></br>
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
 				<script>function hd(){ $(\'#modal\').hide();}</script>
