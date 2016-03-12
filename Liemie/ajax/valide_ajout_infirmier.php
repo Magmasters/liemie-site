@@ -33,7 +33,7 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	if (isset ( $resultat ) && $resultat) {
 		$data ['success'] = true;
 	} else {
-		$errors ['message'] = 'Erreur lors de l\'ajout de l\'infirmier ! ';
+		$errors ['message'][0] = 'Erreur lors de l\'ajout de l\'infirmier ! ';
 	}
 
 	if (! empty ( $errors )) {
@@ -41,11 +41,11 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 		$data ['errors'] = $errors;
 	} else {
 		if ($data ['success']) {
-			$data ['message'] = "Infirmier ajouté avec succés, identifiant (email) : ". $_POST['email']." !";
+			$data ['message'][0] = "Infirmier ajouté avec succés, identifiant (email) : ". $_POST['email']." !";
 		}
 	}
 } else {
-	$errors ['message'] = 'Vous n\'avez pas les droits nécessaires !';
+	$errors ['message'][0] = 'Vous n\'avez pas les droits nécessaires !';
 	$data ['errors'] = $errors;
 }
 

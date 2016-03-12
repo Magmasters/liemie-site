@@ -22,10 +22,14 @@ class controleur {
 		}
 	}
 	public function retourne_equipe() {
-		return '
+		// $retour = $this->retourne_carroussel_bootstrap();
+		$article = $this->vpdo->retourne_article('EQUIPE');
+		$retour = '
 		<article>
-			<h1>L\'Equipe</h1>
+			<h2>'.$article->TITRE.'</h2>
+			'.$article->CONTENU.'
 		</article>';
+		return $retour;
 	}
 	public function retourne_temoignage() {
 		return '
@@ -35,9 +39,11 @@ class controleur {
 	}
 	public function retourne_article_accueil() {
 		// $retour = $this->retourne_carroussel_bootstrap();
+		$article = $this->vpdo->retourne_article('ACCUEIL');
 		$retour = '
 		<article>
-			<h2>Liemie</h2>
+			<h2>'.$article->TITRE.'</h2>
+			'.$article->CONTENU.'
 		</article>';
 		return $retour;
 	}
@@ -50,7 +56,7 @@ class controleur {
 					<input type="password" name="mdp" id="mdp" placeholder="Mot de passe" required/></br>
 					<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
 					<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur</br></br>
-					<input type="submit" name="send" class="button" value="Envoi login" />
+					<input type="submit" name="send" class="button" value="Se connecter" />
 				</form>
 				<script>function hd(){ $(\'#modal\').hide();}</script>
 				<script>function home(){ document.location.href="index.php";}</script>
@@ -90,7 +96,7 @@ class controleur {
 			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
 			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
 			var formData = {
-			"email" 					: $("#email").val().toUpperCase(),
+			"email" 				: $("#email").val().toUpperCase(),
    			"mdp"					: $("#mdp").val(),
    			"categ"					: $categ												   		
 			};	
@@ -250,27 +256,27 @@ class controleur {
 			$libelbutton = 'Modifier';
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
-			$row = $this->vpdo->trouve_infirmier ( $idinfirmier);
-			if ($row != null) {
-				$identifiant = $row->identifiant;
-				$nom1 = $row->nom;
-				$prenom1 = $row->prenom;
-				$adresse11 = $row->adresse1;
-				if (isset ( $row->adresse2 )) {
-					$adresse12 = $row->adresse2;
+			$infirmier = $this->vpdo->trouve_infirmier ( $idinfirmier);
+			if ($infirmier != null) {
+				$identifiant = $infirmier->email;
+				$idadresse = $infirmier->id_adresse;
+				$nom = $infirmier->nom;
+				$prenom = $infirmier->prenom;
+				$adresse1 = $infirmier->adresse_num;
+				$adresse2 = $infirmier->adresse_rue;
+				$date_naiss = $infirmier->date_naiss;
+				$cp = $infirmier->adresse_cp;
+				$ville = $infirmier->adresse_ville;
+				$tel1 = $infirmier->tel1;
+				if (isset ( $infirmier->tel2 )) {
+					$tel2 = $infirmier->tel2;
 				}
-				$cp1 = $row->cp;
-				$ville1 = $row->ville;
-				if (isset ( $row->mail )) {
-					$mail1 = $row->mail;
+				if (isset ( $infirmier->tel3 )) {
+					$tel3 = $infirmier->tel3;
 				}
-				$tel11 = $row->tel1;
-				if (isset ( $row->tel2 )) {
-					$tel12 = $row->tel2;
-				}
-				if (isset ( $row->tel3 )) {
-					$tel13 = $row->tel3;
-				}
+			}
+			else {
+				$identifiant = "Non trouvé...";
 			}
 		}
 		
@@ -296,21 +302,29 @@ class controleur {
 							';
 		}
 		$form = $form . ' 
-					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom1 . '" required/>
-					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom1 . '" required/></br>
+					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom . '" required/>
+					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom . '" required/></br>
 					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $date_naiss . '" required/></br>
-					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
-					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
-					<input type="text" name="cp" id="cp" placeholder="Code Postal" value="' . $cp1 . '" required/>
-					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville1 . '" required/></br>
-					<input type="text" name="mail_id" id="mail_id" placeholder="email" value="' . $mail1 . '" required/></br>
-					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel11 . '" required/>
-					<input type="text" name="tel2" id="tel2" placeholder="Tel portable" value="' . $tel12 . '" />
-					<input type="text" name="tel3" id="tel3" placeholder="Tel travail" value="' . $tel13 . '" /></br>
+					<input type="number" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse1 . '" required/>
+					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse2 . '" /></br>
+					<input type="text" name="cp" id="cp" placeholder="Code Postal" value="' . $cp . '" required/>
+					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville . '" required/></br>
+					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel1 . '" required/>
+					<input type="text" name="tel2" id="tel2" placeholder="Tel portable" value="' . $tel2 . '" />
+					<input type="text" name="tel3" id="tel3" placeholder="Tel travail" value="' . $tel3 . '" /></br>
 					
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
-				<script>function hd(){ $(\'#modal\').hide();}</script>
+							
+				<script>
+					function hd(){
+						$(\'#modal\').hide();
+						if($("#submit").prop("value")=="Supprimer"){
+							window.location.reload();
+						}
+					}
+				</script>
+							
 				<div  id="modal" >
 										<h1>Informations !</h1>
 										<div id="dialog1" ></div>
@@ -318,6 +332,7 @@ class controleur {
 				</div>
 			<article >
 	<script>
+							
 	$("#modal").hide();
 	//Initialize the tooltips
 	$("#form_infirmier :input").tooltipster({
@@ -339,27 +354,42 @@ class controleur {
 	$("#form_infirmier").submit(function( e ){
         e.preventDefault();
 		$("#modal").hide();
+							
+		$mdp = 0;
+		$idinfirmier = 0;
+		$idadresse = 0;
 	
 		var $url="ajax/valide_ajout_infirmier.php";
-		if($("#submit").prop("value")=="Modifier"){$url="ajax/valide_modif_famille.php";}
-		if($("#submit").prop("value")=="Supprimer"){$url="ajax/valide_supp_famille.php";}
-		if($("#submit").prop("value")=="Soumettre"){$url="ajax/valide_demand_famille.php";}
+		if($("#submit").prop("value")=="Modifier"){
+			$idinfirmier = '. json_encode($idinfirmier) .'
+			$idadresse = '. json_encode($idadresse) .'
+			$url="ajax/valide_modif_infirmier.php";
+		}
+		if($("#submit").prop("value")=="Supprimer"){
+			$idinfirmier = '. json_encode($idinfirmier) .'
+			$idadresse = '. json_encode($idadresse) .'
+			$url="ajax/valide_supp_infirmier.php";
+		}
+		if($("#submit").prop("value")=="Ajouter"){$mdp = $("#mp").val();}
 		if($("#form_infirmier").valid())
 		{
 			/* Données du post */
+							
 			var formData = {
-				"mp"					: $("#mp").val(),
+				"mp"					: $mdp,
 				"nom" 					: $("#nom").val().toUpperCase(),
 				"prenom"				: $("#prenom").val(),
 				"adresse1"				: $("#adresse1").val(),
 				"adresse2"				: $("#adresse2").val(),
 				"cp"					: $("#cp").val(),
 				"ville"					: $("#ville").val(),
-				"email"					: $("#mail_id").val(),
+				"email"					: $("#identifiant").val(),
 				"tel1"					: $("#tel1").val(),
 				"tel2"					: $("#tel2").val(),
 				"tel3"					: $("#tel3").val(),
 				"date_naiss"			: $("#date_naiss").val(),
+				"idinfirmier"			: $idinfirmier,
+				"idadresse"				: $idadresse,
 			};
 				
 			var filterDataRequest = $.ajax(
@@ -376,26 +406,34 @@ class controleur {
 			{
 				if ( ! data.success)
 				{
-						var $msg="erreur-></br><ul style=\"list-style-type :decimal;padding:0 5%;\">";
+						$msg="<ul>";
 						if (data.errors.message) {
-							$x=data.errors.message;
-							$msg+="<li>";
-							$msg+=$x;
-							$msg+="</li>";
-							}
+							$.each(data.errors.message, function(index, value) {
+								$msg+="<li>";
+								$msg+=value;
+								$msg+="</li>";
+							});
+						}
 						if (data.errors.requete) {
 							$x=data.errors.requete;
 							$msg+="<li>";
 							$msg+=$x;
 							$msg+="</li>";
-							}
+						}
 	
 						$msg+="</ul>";
 				}
 				else
 				{
-						$msg="";
-						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
+						$msg="<ul>";
+						if(data.message) {
+							$.each(data.message, function(index, value) {
+								$msg+="<li>";
+								$msg+=value;
+								$msg+="</li>";
+							});
+						}
+						$msg+="</ul>";
 				}
 	
 					$("#dialog1").html($msg);$("#modal").show();
@@ -419,32 +457,28 @@ class controleur {
 		rules:
 		{
 							
-			"nom1": {required: true},
-			"prenom1": {required: true},
+			"nom": {required: true},
+			"prenom": {required: true},
 			"adresse1": {required: true},
-			"tel11": {required: true,regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel12": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel13": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel21": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel22": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel23": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"cp1":{required: true,regex:/^\d{5}$/},
-			"ville1": {required: true},
-			"mail1": {required: true,regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/},
-			"cp2":{regex:/^\d{5}$/},
-			"mail2": {regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/}
+			"adresse2": {required: true},
+			"tel1": {required: true,regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"tel2": {regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"tel3": {regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"cp":{required: true,regex:/^\d{5}$/},
+			"ville": {required: true},
+			"email": {required: true,regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/},
 		},
 		messages:
 		{
-        	"nom1":
+        	"nom":
           	{
             	required: "Vous devez saisir un nom valide"
           	},
-			"prenom1":
+			"prenom":
           	{
             	required: "Vous devez saisir un prenom valide"
           	},
-			"adresse1":
+			"adresse":
 			{
             	required: "Vous devez saisir une adresse valide"
           	}
@@ -524,12 +558,12 @@ class controleur {
 				';
 		return $retour;
 	}
-	public function affiche_liste_famille($type) {
+	public function affiche_liste_infirmiers($type) {
 		if ($type == 'Supp') {
-			$titreform = 'Suppression famille';
+			$titreform = 'Suppression infirmier';
 		}
 		if ($type == 'Modif') {
-			$titreform = 'Modification famille';
+			$titreform = 'Modification infirmier';
 		}
 		$retour = '
 				<style type="text/css">
@@ -545,25 +579,25 @@ class controleur {
     	<table>
     		<thead>
         		<tr>
-            		<th >Identifiant Famille</th>
-            		<th >Nom RP1</th>
-            		<th >Prénom RP1</th>
+            		<th >Identifiant</th>
+            		<th >Nom</th>
+            		<th >Prénom</th>
     				<th ></th>
         		</tr>
     		</thead>
     		<tbody >';
-		$result = $this->vpdo->liste_famille ();
+		$result = $this->vpdo->liste_infirmiers ();
 		if ($result != false) {
 			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) ) 
 			// parcourir chaque ligne sélectionnée
 			{
 				
 				$retour = $retour . '<tr>
-    			<td>' . $row->identifiant . '</td>
-    			<td>' . $row->nom1 . '</td>
-    			<td>' . $row->prenom1 . '</td>
+    			<td>' . $row->EMAIL . '</td>
+    			<td>' . $row->NOM . '</td>
+    			<td>' . $row->PRENOM . '</td>
     			
-    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="nom_checkbox[]" value="' . $row->id_famille . '" /></td>
+    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="nom_checkbox[]" value="' . $row->ID_INFIRMIER . '" /></td>
     			</tr>';
 			}
 		}

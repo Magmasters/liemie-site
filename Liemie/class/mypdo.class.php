@@ -168,5 +168,165 @@ class mypdo extends PDO {
 			return false;
 		}
 	}
+	
+	public function maj_infirmier($tab)
+	{
+
+		$statement = 'UPDATE INFIRMIER SET NOM = :nom, PRENOM = :prenom, EMAIL = :email, DATE_NAISSANCE = :date_naiss, TEL1 = :tel1, TEL2 = :tel2, TEL3 = :tel3, LIEN_PHOTO = :lien_photo WHERE ID_INFIRMIER= :id_infirmier';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':id_infirmier', $tab['id_infirmier'], PDO::PARAM_INT);
+		$sth->bindParam(':nom', $tab['nom'], PDO::PARAM_STR);
+		$sth->bindParam(':prenom', $tab['prenom'], PDO::PARAM_STR);
+		$sth->bindParam(':date_naiss', $tab['date_naiss'], PDO::PARAM_STR);
+		$sth->bindParam(':email', $tab['email'], PDO::PARAM_STR);
+		$sth->bindParam(':tel1', $tab['tel1'], PDO::PARAM_STR);
+		$sth->bindParam(':tel2', $tab['tel2'], PDO::PARAM_STR);
+		$sth->bindParam(':tel3', $tab['tel3'], PDO::PARAM_STR);
+		$sth->bindParam(':lien_photo', $tab['lien_photo'], PDO::PARAM_STR);
+		
+		/*
+		 * Requête passée avec succés, infirmier ajouté
+		 */
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
+	}
+	
+	public function maj_adresse_infirmier($tab) {
+		/*
+		 * Une fois les informations de l'infirmier mises à jour
+		 * ont met à jour les informations de l'adresse correspodante
+		 */
+		$idadresse = intval($tab['id_adresse']);
+		
+		$statement = 'UPDATE ADRESSE SET NUM=:num, RUE=:rue, VILLE=:ville, CODE_POSTAL=:cp WHERE ID_ADRESSE=:id_adresse';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':num', $tab['num_rue'], PDO::PARAM_STR);
+		$sth->bindParam(':rue', $tab['nom_rue'], PDO::PARAM_STR);
+		$sth->bindParam(':ville', $tab['ville'], PDO::PARAM_STR);
+		$sth->bindParam(':cp', $tab['cp'], PDO::PARAM_STR);
+		$sth->bindParam(':id_adresse', $idadresse, PDO::PARAM_INT);
+		
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
+	}
+	
+	public function liste_infirmiers()
+	{
+		$statement = 'SELECT * FROM INFIRMIER';
+		$sth = $this->connexion->prepare ( $statement );
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			return $sth;
+		}
+		
+		return false;
+	}
+	
+	public function trouve_infirmier($idinfirmier)
+	{
+		$infirmier = new Infirmier();
+		$statement = 'SELECT * FROM INFIRMIER WHERE ID_INFIRMIER = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $idinfirmier, PDO::PARAM_INT );
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			
+			$row_infirmier = $sth->fetchObject();
+			
+			$statement = 'SELECT * FROM ADRESSE WHERE ID_ADRESSE = :id_adr';
+			$sth = $this->connexion->prepare($statement);
+			$sth->bindParam(':id_adr', $row_infirmier->ID_ADRESSE);
+			
+			if ($sth->execute() && $sth->rowCount() > 0) {
+				
+				$row_adresse = $sth->fetchObject();
+				
+				$infirmier->id_infirmier = $row_infirmier->ID_INFIRMIER;
+				$infirmier->id_adresse = $row_infirmier->ID_ADRESSE;
+				$infirmier->email = $row_infirmier->EMAIL;
+				$infirmier->nom = $row_infirmier->NOM;
+				$infirmier->prenom = $row_infirmier->PRENOM;
+				$infirmier->date_naiss = $row_infirmier->DATE_NAISSANCE;
+				$infirmier->lien_photo = $row_infirmier->LIEN_PHOTO;
+				$infirmier->tel1 = $row_infirmier->TEL1;
+				$infirmier->tel2 = $row_infirmier->TEL2;
+				$infirmier->tel3 = $row_infirmier->TEL3;
+				
+				$infirmier->adresse_num = $row_adresse->NUM;
+				$infirmier->adresse_rue = $row_adresse->RUE;
+				$infirmier->adresse_cp = $row_adresse->CODE_POSTAL;
+				$infirmier->adresse_ville = $row_adresse->VILLE;
+				
+				return $infirmier;
+			}
+		}
+	
+		return null;
+	}
+	
+	public function supprimer_infirmier($tab)
+	{
+		$statement = 'DELETE FROM SPECIALISER WHERE ID_INFIRMIER = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $tab['id_infirmier'], PDO::PARAM_INT );
+		
+		if (!$sth->execute()) {
+			return false;
+		}
+		
+		$statement = 'DELETE FROM VISITE WHERE ID_INFIRMIER = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $tab['id_infirmier'], PDO::PARAM_INT );
+		
+		if (!$sth->execute()) {
+			return false;
+		}
+		
+		$statement = 'DELETE FROM AFFECTER_INFIRMIER WHERE ID_INFIRMIER = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $tab['id_infirmier'], PDO::PARAM_INT );
+		
+		if (!$sth->execute()) {
+			return false;
+		}
+		
+		$statement = 'DELETE FROM INFIRMIER WHERE ID_INFIRMIER = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $tab['id_infirmier'], PDO::PARAM_INT );
+		
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			return false;
+		}
+		
+		$statement = 'DELETE FROM ADRESSE WHERE ID_ADRESSE = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', $tab['id_adresse'], PDO::PARAM_INT );
+			
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function retourne_article($type)
+	{
+		$statement = 'SELECT * FROM ARTICLES WHERE TYPE = :type';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':type', $type, PDO::PARAM_STR );
+		if ($sth->execute () && $sth->rowCount () > 0) {
+				
+			$row = $sth->fetchObject();
+			return $row;
+		}
+		
+		return null;
+	}
 }
 ?>

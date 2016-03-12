@@ -12,10 +12,10 @@ class page_base {
 			'bootstrap.min' 
 	);
 	protected $page;
-	protected $metadescription = "Kali�mie";
+	protected $metadescription = "Kaliémie";
 	protected $metakeyword = array (
-			'Kali�mie',
-			'Visites m�dicales' 
+			'Kaliémie',
+			'Visites médicales' 
 	);
 	public function __construct($p) {
 		$this->titre = $p;

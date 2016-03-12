@@ -26,22 +26,38 @@ class page_base_securisee_admin extends page_base {
 		aria-expanded="false">Administration<span class="caret"></span></a>
 		<ul class="dropdown-menu  multi-level">
 			<li><a href="">Modifier le mot de passe</a></li>
+			
 			<li role="separator" class="divider"></li>
 
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des infirmiers</a>
 				<ul class="dropdown-menu">
 					<li><a href="ajout_infirmier.php">Inscrire un infirmier</a></li>
 					<li><a href="modif_infirmier.php">Modifier un infirmier</a></li>
-					<li><a href="">Supprimer un infirmier</a></li>
-				</ul></li>
+					<li><a href="supp_infirmier.php">Supprimer un infirmier</a></li>
+				</ul>
+			</li>
+			
 			<li role="separator" class="divider"></li>
+			
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des patients</a>
 				<ul class="dropdown-menu">
 					<li><a href="">Inscrire un patient</a></li>
 					<li><a href="">Modifier un patient</a></li>
 					<li><a href="">Supprimer une inscription patient</a></li>
-				</ul></li>
-		</ul></li>
+				</ul>
+			</li>
+			
+			<li role="separator" class="divider"></li>
+			
+			<li class="dropdown dropdown-submenu"><a href="#">Gestion des articles</a>
+				<ul class="dropdown-menu">
+					<li><a href="">Ajouter un article</a></li>
+					<li><a href="">Modifier un article</a></li>
+					<li><a href="">Supprimer un article</a></li>
+				</ul>
+			</li>
+		</ul>
+	</li>
 </ul>
 <?php
 	}
