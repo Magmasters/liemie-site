@@ -51,9 +51,9 @@ class page_base_securisee_admin extends page_base {
 			
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des articles</a>
 				<ul class="dropdown-menu">
-					<li><a href="">Ajouter un article</a></li>
-					<li><a href="">Modifier un article</a></li>
-					<li><a href="">Supprimer un article</a></li>
+					<li><a href="ajout_article.php">Ajouter un article</a></li>
+					<li><a href="modif_article.php">Modifier un article</a></li>
+					<li><a href="supp_article.php">Supprimer un article</a></li>
 				</ul>
 			</li>
 		</ul>

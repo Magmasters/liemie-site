@@ -23,12 +23,19 @@ class controleur {
 	}
 	public function retourne_equipe() {
 		// $retour = $this->retourne_carroussel_bootstrap();
-		$article = $this->vpdo->retourne_article('EQUIPE');
-		$retour = '
-		<article>
-			<h2>'.$article->TITRE.'</h2>
-			'.$article->CONTENU.'
-		</article>';
+		$articles = $this->vpdo->retourne_article_par_type('EQUIPE');
+		$retour = '';
+		
+		while ($article = $articles->fetchObject())
+		{
+			$retour = $retour. '
+			<article>
+				<h2>'.$article->TITRE.'</h2>
+				'.$article->CONTENU.'
+			</article>
+			';
+		}
+		
 		return $retour;
 	}
 	public function retourne_temoignage() {
@@ -39,12 +46,19 @@ class controleur {
 	}
 	public function retourne_article_accueil() {
 		// $retour = $this->retourne_carroussel_bootstrap();
-		$article = $this->vpdo->retourne_article('ACCUEIL');
-		$retour = '
-		<article>
-			<h2>'.$article->TITRE.'</h2>
-			'.$article->CONTENU.'
-		</article>';
+		$articles = $this->vpdo->retourne_article_par_type('ACCUEIL');
+		$retour = '';
+		
+		while ($article = $articles->fetchObject())
+		{
+			$retour = $retour. '
+			<article>
+				<h2>'.$article->TITRE.'</h2>
+				'.$article->CONTENU.'
+			</article>
+			';
+		}
+		
 		return $retour;
 	}
 	public function retourne_formulaire_login() {
@@ -497,6 +511,217 @@ class controleur {
 		';
 		return $form;
 	}
+	
+	public function retourne_formulaire_article($type, $idarticle = "") {
+		$form = '';
+		$titre = '';
+		$contenu = '';
+		$type_article = '';
+	
+		if ($type == 'Ajout') {
+			$titreform = 'Formulaire ajout article';
+			$libelbutton = 'Ajouter';
+		}
+		if ($type == 'Supp') {
+			$titreform = 'Formulaire suppression article';
+			$libelbutton = 'Supprimer';
+		}
+		if ($type == 'Modif') {
+			$titreform = 'Formulaire modification article';
+			$libelbutton = 'Modifier';
+		}
+		if ($type == 'Supp' || $type == 'Modif') {
+			$article = $this->vpdo->retourne_article_par_id($idarticle);
+			if ($infirmier != null) {
+				$titre = $infirmier->TITRE;
+				$contenu = $infirmier->CONTENU;
+				$type_article = $infirmier->TYPE;
+			}
+			else {
+				$titre = "Non trouvé...";
+			}
+		}
+	
+		$form = '
+			<article >
+				<h3>' . $titreform . '</h3>
+				<form id="form_article" method="post" >';
+		$form = $form . '
+					<input type="text" name="titre" id="titre" placeholder="Titre" value="' . $titre . '" required/>
+					<select name="type_article" id="type_article">
+						<option value="ACCUEIL" selected>Accueil</option> 
+						<option value="EQUIPE">Equipe</option>
+						<option value="CONTACT">Contact</option>
+					</select>
+					</br>
+					<textarea rows="4" cols="50" name="contenu" id="contenu">Contenu de l\'article...</textarea>
+					</br>
+			
+					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
+				</form>
+				
+				<script>
+					function hd(){
+						$(\'#modal\').hide();
+						if($("#submit").prop("value")=="Supprimer"){
+							window.location.reload();
+						}
+					}
+				</script>
+				
+				<div  id="modal" >
+										<h1>Informations !</h1>
+										<div id="dialog1" ></div>
+										<a class="no" onclick="hd();">OK</a>
+				</div>
+			<article >
+	<script>
+				
+	$("#modal").hide();
+	//Initialize the tooltips
+	$("#form_article :input").tooltipster({
+				         trigger: "custom",
+				         onlyOne: false,
+				         position: "bottom",
+				         multiple:true,
+				         autoClose:false});
+		jQuery.validator.addMethod(
+			  "regex",
+			   function(value, element, regexp) {
+			       if (regexp.constructor != RegExp)
+			          regexp = new RegExp(regexp);
+			       else if (regexp.global)
+			          regexp.lastIndex = 0;
+			          return this.optional(element) || regexp.test(value);
+			   },"erreur champs non valide"
+			);
+	$("#form_article").submit(function( e ){
+        e.preventDefault();
+		$("#modal").hide();
+				
+		$idarticle = 0;
+	
+		var $url="ajax/valide_ajout_article.php";
+		if($("#submit").prop("value")=="Modifier"){
+			$idarticle = '. json_encode($idarticle) .'
+			$url="ajax/valide_modif_article.php";
+		}
+		if($("#submit").prop("value")=="Supprimer"){
+			$idarticle = '. json_encode($idarticle) .'
+			$url="ajax/valide_supp_article.php";
+		}
+		if($("#submit").prop("value")=="Ajouter"){$mdp = $("#mp").val();}
+		if($("#form_article").valid())
+		{
+			/* Données du post */
+				
+			var formData = {
+				"type_article"			: $("#type_article").val(),
+				"titre" 				: $("#titre").val(),
+				"contenu"				: $("#contenu").text(),
+				"idarticle"				: $idarticle,
+			};
+	
+			var filterDataRequest = $.ajax(
+    		{
+	
+        		type: "POST",
+        		url: $url,
+        		dataType: "json",
+				encode	: true,
+        		data	: formData,
+	
+			});
+			filterDataRequest.done(function(data)
+			{
+				if ( ! data.success)
+				{
+						$msg="<ul>";
+						if (data.errors.message) {
+							$.each(data.errors.message, function(index, value) {
+								$msg+="<li>";
+								$msg+=value;
+								$msg+="</li>";
+							});
+						}
+						if (data.errors.requete) {
+							$x=data.errors.requete;
+							$msg+="<li>";
+							$msg+=$x;
+							$msg+="</li>";
+						}
+	
+						$msg+="</ul>";
+				}
+				else
+				{
+						$msg="<ul>";
+						if(data.message) {
+							$.each(data.message, function(index, value) {
+								$msg+="<li>";
+								$msg+=value;
+								$msg+="</li>";
+							});
+						}
+						$msg+="</ul>";
+				}
+	
+					$("#dialog1").html($msg);$("#modal").show();
+	
+				});
+			filterDataRequest.fail(function(jqXHR, textStatus)
+			{
+	
+     			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
+    			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
+				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
+				else if (textStatus === "parsererror"){alert("Requested JSON parse failed.");}
+				else if (textStatus === "timeout"){alert("Time out error.");}
+				else if (textStatus === "abort"){alert("Ajax request aborted.");}
+				else{alert("Uncaught Error.n" + jqXHR.responseText);}
+			});
+		}
+	});
+	
+	$("#form_infirmier").validate({
+		rules:
+		{
+				
+			"titre": {required: true},
+			"contenu": {required: true},
+			"type_article": {required: true},
+			"adresse2": {required: true},
+		},
+		messages:
+		{
+        	"titre":
+          	{
+            	required: "Vous devez saisir un titre valide."
+          	},
+			"contenu":
+          	{
+            	required: "Vous devez saisir du texte ici."
+          	},
+			"type_article":
+			{
+            	required: "Veuillez selectionner un type."
+          	}
+		},
+		errorPlacement: function (error, element) {
+			$(element).tooltipster("update", $(error).text());
+			$(element).tooltipster("show");
+		},
+		success: function (label, element)
+		{
+			$(element).tooltipster("hide");
+		}
+   	});
+	</script>
+	
+		';
+		return $form;
+	}
+	
 	public function retourne_carroussel_bootstrap() {
 		$retour = '
 				<style type="text/css">

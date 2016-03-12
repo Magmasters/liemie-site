@@ -315,18 +315,47 @@ class mypdo extends PDO {
 		return true;
 	}
 	
-	public function retourne_article($type)
+	public function retourne_article_par_type($type)
 	{
 		$statement = 'SELECT * FROM ARTICLES WHERE TYPE = :type';
 		$sth = $this->connexion->prepare ( $statement );
 		$sth->bindParam ( ':type', $type, PDO::PARAM_STR );
 		if ($sth->execute () && $sth->rowCount () > 0) {
-				
-			$row = $sth->fetchObject();
-			return $row;
+			return $sth;
 		}
 		
 		return null;
+	}
+	
+	public function retourne_article_par_id($id)
+	{
+		$statement = 'SELECT * FROM ARTICLES WHERE ID_ARTICLE = :id';
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam ( ':id', intval($id), PDO::PARAM_INT );
+		if ($sth->execute () && $sth->rowCount () > 0) {
+	
+			$row = $sth->fetchObject();
+			return $row;
+		}
+	
+		return null;
+	}
+	
+	public function ajouter_article($tab)
+	{
+		$statement = 'INSERT INTO ARTICLES (TITRE, TYPE, CONTENU) VALUES(:titre, :type, :contenu)';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':titre', $tab['titre'], PDO::PARAM_STR);
+		$sth->bindParam(':type', $tab['type'], PDO::PARAM_STR);
+		$sth->bindParam(':contenu', $tab['contenu'], PDO::PARAM_STR);
+		
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		}
+		
+		echo var_dump($sth->errorInfo());
+		
+		return false;
 	}
 }
 ?>
