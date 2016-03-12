@@ -25,7 +25,7 @@ class page_base_securisee_admin extends page_base {
 		data-toggle="dropdown" role="button" aria-haspopup="true"
 		aria-expanded="false">Administration<span class="caret"></span></a>
 		<ul class="dropdown-menu  multi-level">
-			<li><a href="">Modifier mot de passe</a></li>
+			<li><a href="">Modifier le mot de passe</a></li>
 			<li role="separator" class="divider"></li>
 
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des infirmiers</a>

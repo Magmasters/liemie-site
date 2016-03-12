@@ -16,20 +16,21 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	$tab ['nom'] = $_POST ['nom'];
 	$tab ['prenom'] = $_POST ['prenom'];
 	$tab ['date_naiss'] = $_POST ['date_naiss'];
-	//Adresse
-	$tab ['adresse1'] = $_POST ['adresse1'];
-	$tab ['adresse2'] = $_POST ['adresse2'];
-	$tab ['cp'] = $_POST ['cp'];
-	$tab ['ville'] = $_POST ['ville'];
 	$tab ['tel1'] = $_POST ['tel1'];
 	$tab ['tel2'] = $_POST ['tel2'];
 	$tab ['tel3'] = $_POST ['tel3'];
+	
+	//Adresse
+	$tab ['num_rue'] = $_POST ['adresse1'];
+	$tab ['nom_rue'] = $_POST ['adresse2'];
+	$tab ['cp'] = $_POST ['cp'];
+	$tab ['ville'] = $_POST ['ville'];
 	
 	$tab ['lien_photo'] = ''; // Pas de lien photo
 	
 
 	$resultat = $mypdo->ajouter_infirmier ( $tab );
-	if (isset ( $resultat )) {
+	if (isset ( $resultat ) && $resultat) {
 		$data ['success'] = true;
 	} else {
 		$errors ['message'] = 'Erreur lors de l\'ajout de l\'infirmier ! ';

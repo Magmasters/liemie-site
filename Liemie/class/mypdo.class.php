@@ -11,7 +11,7 @@ class mypdo extends PDO {
 			$this->connexion = new PDO ( 'mysql:host=' . $this->PARAM_hote . ';dbname=' . $this->PARAM_nom_bd, $this->PARAM_utilisateur, $this->PARAM_mot_passe, array (
 					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' 
 			) );
-			// echo '<script>alert ("ok connex");</script>)';echo $this->PARAM_nom_bd;
+			
 		} catch ( PDOException $e ) {
 			echo 'hote: ' . $this->PARAM_hote . ' ' . $_SERVER ['DOCUMENT_ROOT'] . '<br />';
 			echo 'Erreur : ' . $e->getMessage () . '<br />';
@@ -131,13 +131,32 @@ class mypdo extends PDO {
 	
 	public function ajouter_infirmier($tab)
 	{
-		$statement = 'INSERT INTO INFIRMIER (NOM, PRENOM, DATE_NAISSANCE, EMAIL, MDP) VALUES (:nom, :prenom, :date_naiss, :email, :mdp)';
+		$statement = 'INSERT INTO ADRESSE (NUM, RUE, VILLE, CODE_POSTAL) VALUES(:num, :rue, :ville, :cp)';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':num', $tab['num_rue'], PDO::PARAM_INT);
+		$sth->bindParam(':rue', $tab['nom_rue'], PDO::PARAM_STR);
+		$sth->bindParam(':ville', $tab['ville'], PDO::PARAM_STR);
+		$sth->bindParam(':cp', $tab['cp'], PDO::PARAM_STR);
+		
+		//Si l'ajout de l'adresse dans la table adresse échoué on revoit FALSE
+		//sinon on continue l'insertion
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			return false;
+		} else {
+			$tab['id_adresse'] = $this->connexion->lastInsertId();
+		}
+		
+		$statement = 'INSERT INTO INFIRMIER (NOM, PRENOM, DATE_NAISSANCE, EMAIL, MDP, TEL1, TEL2, TEL3, ID_ADRESSE) VALUES (:nom, :prenom, :date_naiss, :email, :mdp, :tel1, :tel2, :tel3, :id_adresse)';
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':nom', $tab['nom'], PDO::PARAM_STR);
 		$sth->bindParam(':prenom', $tab['prenom'], PDO::PARAM_STR);
 		$sth->bindParam(':date_naiss', $tab['date_naiss'], PDO::PARAM_STR);
 		$sth->bindParam(':email', $tab['email'], PDO::PARAM_STR);
 		$sth->bindParam(':mdp', $tab['mdp'], PDO::PARAM_STR);
+		$sth->bindParam(':tel1', $tab['tel1'], PDO::PARAM_STR);
+		$sth->bindParam(':tel2', $tab['tel2'], PDO::PARAM_STR);
+		$sth->bindParam(':tel3', $tab['tel3'], PDO::PARAM_STR);
+		$sth->bindParam(':id_adresse', $tab['id_adresse'], PDO::PARAM_STR);
 		
 		/*
 		 * Requête passée avec succés, infirmier ajouté

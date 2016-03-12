@@ -250,78 +250,26 @@ class controleur {
 			$libelbutton = 'Modifier';
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
-			$row = $this->vpdo->trouve_famille ( $idinfirmier);
+			$row = $this->vpdo->trouve_infirmier ( $idinfirmier);
 			if ($row != null) {
 				$identifiant = $row->identifiant;
-				$nom1 = $row->nom1;
-				$prenom1 = $row->prenom1;
-				$adresse11 = $row->adresse11;
-				if (isset ( $row->adresse12 )) {
-					$adresse12 = $row->adresse12;
+				$nom1 = $row->nom;
+				$prenom1 = $row->prenom;
+				$adresse11 = $row->adresse1;
+				if (isset ( $row->adresse2 )) {
+					$adresse12 = $row->adresse2;
 				}
-				$cp1 = $row->cp1;
-				$ville1 = $row->ville1;
-				if (isset ( $row->mail1 )) {
-					$mail1 = $row->mail1;
+				$cp1 = $row->cp;
+				$ville1 = $row->ville;
+				if (isset ( $row->mail )) {
+					$mail1 = $row->mail;
 				}
-				$tel11 = $row->tel11;
-				if (isset ( $row->tel12 )) {
-					$tel12 = $row->tel12;
+				$tel11 = $row->tel1;
+				if (isset ( $row->tel2 )) {
+					$tel12 = $row->tel2;
 				}
-				if (isset ( $row->tel13 )) {
-					$tel13 = $row->tel13;
-				}
-				if ($row->fonction1 == 'pere') {
-					$checkpere1 = 'checked';
-				}
-				if ($row->fonction1 == 'mere') {
-					$checkmere1 = 'checked';
-				}
-				if ($row->fonction1 != 'pere' && $row->fonction1 != 'mere') {
-					$checkautre1 = 'checked';
-					$autre1 = $row->fonction1;
-				}
-				if (isset ( $row->nom2 )) {
-					$nom2 = $row->nom2;
-				}
-				if (isset ( $row->prenom2 )) {
-					$prenom2 = $row->prenom2;
-				}
-				if (isset ( $row->adresse21 )) {
-					$adresse21 = $row->adresse21;
-				}
-				if (isset ( $row->adresse22 )) {
-					$adresse22 = $row->adresse22;
-				}
-				if (isset ( $row->cp2 )) {
-					$cp2 = $row->cp2;
-				}
-				if (isset ( $row->ville2 )) {
-					$ville2 = $row->ville2;
-				}
-				if (isset ( $row->mail2 )) {
-					$mail2 = $row->mail2;
-				}
-				if (isset ( $row->tel21 )) {
-					$tel21 = $row->tel21;
-				}
-				if (isset ( $row->tel22 )) {
-					$tel22 = $row->tel22;
-				}
-				if (isset ( $row->tel23 )) {
-					$tel23 = $row->tel23;
-				}
-				if (isset ( $row->fonction2 )) {
-					if ($row->fonction2 == 'pere') {
-						$checkpere2 = 'checked';
-					}
-					if ($row->fonction2 == 'mere') {
-						$checkmere2 = 'checked';
-					}
-					if ($row->fonction2 != 'pere' && $row->fonction2 != 'mere') {
-						$checkautre2 = 'checked';
-						$autre2 = $row->fonction2;
-					}
+				if (isset ( $row->tel3 )) {
+					$tel13 = $row->tel3;
 				}
 			}
 		}
@@ -353,12 +301,12 @@ class controleur {
 					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $date_naiss . '" required/></br>
 					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
 					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
-					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
+					<input type="text" name="cp" id="cp" placeholder="Code Postal" value="' . $cp1 . '" required/>
 					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville1 . '" required/></br>
 					<input type="text" name="mail_id" id="mail_id" placeholder="email" value="' . $mail1 . '" required/></br>
 					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel11 . '" required/>
-					<input type="text" name="tel2" id="tel1" placeholder="Tel portable" value="' . $tel12 . '" />
-					<input type="text" name="tel3" id="tel2" placeholder="Tel travail" value="' . $tel13 . '" /></br>
+					<input type="text" name="tel2" id="tel2" placeholder="Tel portable" value="' . $tel12 . '" />
+					<input type="text" name="tel3" id="tel3" placeholder="Tel travail" value="' . $tel13 . '" /></br>
 					
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
