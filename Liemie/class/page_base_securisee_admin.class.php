@@ -28,19 +28,18 @@ class page_base_securisee_admin extends page_base {
 			<li><a href="">Modifier mot de passe</a></li>
 			<li role="separator" class="divider"></li>
 
-			<li class="dropdown dropdown-submenu"><a href="#">Famille</a>
+			<li class="dropdown dropdown-submenu"><a href="#">Gestion Infirmiers</a>
 				<ul class="dropdown-menu">
 					<li><a href="ajout_infirmier.php">Inscrire un infirmier</a></li>
 					<li><a href="modif_infirmier.php">Modifier un infirmier</a></li>
-					<li><a href="">Supprimer une famille</a></li>
-					<li><a href="">Choisir une famille</a></li>
+					<li><a href="">Supprimer un infirmier</a></li>
 				</ul></li>
 			<li role="separator" class="divider"></li>
-			<li class="dropdown dropdown-submenu"><a href="#">Enfant</a>
+			<li class="dropdown dropdown-submenu"><a href="#">Patients</a>
 				<ul class="dropdown-menu">
-					<li><a href="">Inscrire un enfant</a></li>
-					<li><a href="">Modifier une enfant</a></li>
-					<li><a href="">Supprimer une inscription enfant</a></li>
+					<li><a href="">Inscrire un patient</a></li>
+					<li><a href="">Modifier un patient</a></li>
+					<li><a href="">Supprimer une inscription patient</a></li>
 				</ul></li>
 		</ul></li>
 </ul>
