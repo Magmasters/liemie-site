@@ -32,8 +32,10 @@ class mypdo extends PDO {
 	public function connect($tab) {
 		if ($tab ['categ'] == 'infirmier') {
 			$requete = 'select * from INFIRMIER where EMAIL="' . $tab ['email'] . '" and MDP="' . $tab ['mdp'] . '";';
-		} else {
+		} elseif ($tab ['categ'] == 'admin') {
 			$requete = 'select * from ADMIN where EMAIL="' . $tab ['email'] . '" and MDP="' . $tab ['mdp'] . '";';
+		} elseif ($tab ['categ'] == 'patient') {
+			$requete = 'select * from PATIENT where EMAIL="' . $tab ['email'] . '" and MDP="' . $tab ['mdp'] . '";';
 		}
 		$result = $this->connexion->query ( $requete );
 		if ($result) {
@@ -329,9 +331,10 @@ class mypdo extends PDO {
 	
 	public function retourne_article_par_id($id)
 	{
+		$id = intval($id);
 		$statement = 'SELECT * FROM ARTICLES WHERE ID_ARTICLE = :id';
 		$sth = $this->connexion->prepare ( $statement );
-		$sth->bindParam ( ':id', intval($id), PDO::PARAM_INT );
+		$sth->bindParam ( ':id', $id, PDO::PARAM_INT );
 		if ($sth->execute () && $sth->rowCount () > 0) {
 	
 			$row = $sth->fetchObject();
@@ -356,6 +359,53 @@ class mypdo extends PDO {
 		echo var_dump($sth->errorInfo());
 		
 		return false;
+	}
+	
+	public function liste_articles()
+	{
+		$statement = 'SELECT * FROM ARTICLES';
+		$sth = $this->connexion->prepare ( $statement );
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			return $sth;
+		}
+	
+		return false;
+	}
+	
+	public function maj_article($tab)
+	{
+	
+		$statement = 'UPDATE ARTICLES SET TITRE = :titre, TYPE = :type, CONTENU = :contenu WHERE ID_ARTICLE= :id_article';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':id_article', $tab['id_article'], PDO::PARAM_INT);
+		$sth->bindParam(':titre', $tab['titre'], PDO::PARAM_STR);
+		$sth->bindParam(':type', $tab['type'], PDO::PARAM_STR);
+		$sth->bindParam(':contenu', $tab['contenu'], PDO::PARAM_STR);
+		/*
+		 * Requête passée avec succés, article mis à jour dansl a BDD
+		 */
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
+	}
+	
+	public function supprimer_article($tab)
+	{
+		$statement = 'DELETE FROM ARTICLES WHERE ID_ARTICLE= :id_article';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':id_article', $tab['id_article'], PDO::PARAM_INT);
+		/*
+		 * Requête passée avec succés, article supprimé
+		 */
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
 	}
 }
 ?>

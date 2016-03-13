@@ -13,6 +13,9 @@ if (isset ( $_SESSION ['email'] ) && isset ( $_SESSION ['type'] )) {
 	if ($_SESSION ['type'] == 'admin') {
 		$site = new page_base_securisee_admin ( 'Accueil' );
 	}
+	if ($_SESSION ['type'] == 'patient') {
+		$site = new page_base_securisee_patient ( 'Accueil' );
+	}
 }
 
 $controleur = new controleur ();

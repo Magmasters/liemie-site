@@ -26,6 +26,11 @@ class controleur {
 		$articles = $this->vpdo->retourne_article_par_type('EQUIPE');
 		$retour = '';
 		
+		if ($articles == null)
+		{
+			return $retour;
+		}
+		
 		while ($article = $articles->fetchObject())
 		{
 			$retour = $retour. '
@@ -38,29 +43,60 @@ class controleur {
 		
 		return $retour;
 	}
+	
+	public function retourne_contact() {
+		// $retour = $this->retourne_carroussel_bootstrap();
+		$articles = $this->vpdo->retourne_article_par_type('CONTACT');
+		$retour = '';
+		
+		if ($articles == null)
+		{
+			return $retour;
+		}
+		
+		while ($article = $articles->fetchObject())
+		{
+			$retour = $retour. '
+			<article>
+				<h2>'.$article->TITRE.'</h2>
+				'.$article->CONTENU.'
+			</article>
+			';
+		}
+	
+		return $retour;
+	}
+	
+	public function retourne_article_accueil() {
+		// $retour = $this->retourne_carroussel_bootstrap();
+		$articles = $this->vpdo->retourne_article_par_type('ACCUEIL');
+		$retour = '';
+		
+		if ($articles == null)
+		{
+			return $retour;
+		}
+		
+		while ($article = $articles->fetchObject())
+		{
+			$retour = $retour. '
+			<article>
+				<h2>'.$article->TITRE.'</h2>
+				'.$article->CONTENU.'
+			</article>
+			';
+		}
+		
+		return $retour;
+	}
+	
 	public function retourne_temoignage() {
 		return '
 		<article>
 			<h1>Témoignages</h1>
 		</article>';
 	}
-	public function retourne_article_accueil() {
-		// $retour = $this->retourne_carroussel_bootstrap();
-		$articles = $this->vpdo->retourne_article_par_type('ACCUEIL');
-		$retour = '';
-		
-		while ($article = $articles->fetchObject())
-		{
-			$retour = $retour. '
-			<article>
-				<h2>'.$article->TITRE.'</h2>
-				'.$article->CONTENU.'
-			</article>
-			';
-		}
-		
-		return $retour;
-	}
+	
 	public function retourne_formulaire_login() {
 		return '
 			<article >
@@ -68,6 +104,7 @@ class controleur {
 				<form id="login" method="post" class="login">
 					<input type="text" name="email" id="email" placeholder="Identifiant" required/>
 					<input type="password" name="mdp" id="mdp" placeholder="Mot de passe" required/></br>
+					<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
 					<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
 					<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur</br></br>
 					<input type="submit" name="send" class="button" value="Se connecter" />
@@ -106,7 +143,8 @@ class controleur {
 		var $url="ajax/valide_connect.php";
 		if($("#login").valid())
 		{
-			$categ="infirmier";		
+			$categ="infirmier";
+			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbp"){$categ="patient";}
 			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
 			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
 			var formData = {
@@ -532,10 +570,10 @@ class controleur {
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
 			$article = $this->vpdo->retourne_article_par_id($idarticle);
-			if ($infirmier != null) {
-				$titre = $infirmier->TITRE;
-				$contenu = $infirmier->CONTENU;
-				$type_article = $infirmier->TYPE;
+			if ($article != null) {
+				$titre = $article->TITRE;
+				$contenu = $article->CONTENU;
+				$type_article = $article->TYPE;
 			}
 			else {
 				$titre = "Non trouvé...";
@@ -545,22 +583,31 @@ class controleur {
 		$form = '
 			<article >
 				<h3>' . $titreform . '</h3>
-				<form id="form_article" method="post" >';
+				<form id="form_article" method="post" role="form" >';
 		$form = $form . '
-					<input type="text" name="titre" id="titre" placeholder="Titre" value="' . $titre . '" required/>
+					<div class="form-group">
+						<label for="titre">Titre de l\'article</label>
+						<input type="text" class="form-control" id="titre" name="titre" value='.$titre.'>
+					</div>
+					<div class="form-group">
+					<label for="type_article">Type de l\'article</label>
 					<select name="type_article" id="type_article">
-						<option value="ACCUEIL" selected>Accueil</option> 
+						<option value="ACCUEIL">Accueil</option> 
 						<option value="EQUIPE">Equipe</option>
 						<option value="CONTACT">Contact</option>
 					</select>
-					</br>
-					<textarea rows="4" cols="50" name="contenu" id="contenu">Contenu de l\'article...</textarea>
-					</br>
-			
+					</div>
+								
+					<div class="form-group">
+						<label for="contenu">Contenu de l\'article</label>
+						<textarea rows="4" cols="50" name="contenu" id="contenu" class="ckeditor">'.$contenu.'</textarea>
+					</div>
+					
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
 				
 				<script>
+					$("#type_article").val('.json_encode($type_article).');
 					function hd(){
 						$(\'#modal\').hide();
 						if($("#submit").prop("value")=="Supprimer"){
@@ -600,6 +647,7 @@ class controleur {
 		$("#modal").hide();
 				
 		$idarticle = 0;
+		$contenu = CKEDITOR.instances.contenu.getData();
 	
 		var $url="ajax/valide_ajout_article.php";
 		if($("#submit").prop("value")=="Modifier"){
@@ -618,7 +666,8 @@ class controleur {
 			var formData = {
 				"type_article"			: $("#type_article").val(),
 				"titre" 				: $("#titre").val(),
-				"contenu"				: $("#contenu").text(),
+				/*"contenu"				: $("#contenu").text(),*/
+				"contenu"				: $contenu,
 				"idarticle"				: $idarticle,
 			};
 	
@@ -783,6 +832,52 @@ class controleur {
 				';
 		return $retour;
 	}
+	
+	public function affiche_liste_articles($type) {
+		if ($type == 'Supp') {
+			$titreform = 'Suppression article';
+		}
+		if ($type == 'Modif') {
+			$titreform = 'Modification article';
+		}
+		$retour = '
+				<style type="text/css">
+    			table {border-collapse: collapse;}
+				tr:nth-of-type(odd) {background: #eee;}
+				tr:nth-of-type(even) {background: #eff;}
+				tr{color: black;}
+				th {background: #333;color: white;}
+				td, th {padding: 6px;border: 1px solid #ccc;}
+				</style>
+				<article >
+				<h3>' . $titreform . '</h3><form method="post">
+    	<table>
+    		<thead>
+        		<tr>
+            		<th >Type</th>
+            		<th >Titre</th>
+    				<th ></th>
+        		</tr>
+    		</thead>
+    		<tbody >';
+		$result = $this->vpdo->liste_articles ();
+		if ($result != false) {
+			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
+			// parcourir chaque ligne sélectionnée
+			{
+	
+				$retour = $retour . '<tr>
+    			<td>' . $row->TYPE . '</td>
+    			<td>' . $row->TITRE . '</td>
+    
+    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="checkbox_nom[]" value="' . $row->ID_ARTICLE . '" /></td>
+    			</tr>';
+			}
+		}
+		$retour = $retour . '</tbody></table></form></article>';
+		return $retour;
+	}
+	
 	public function affiche_liste_infirmiers($type) {
 		if ($type == 'Supp') {
 			$titreform = 'Suppression infirmier';

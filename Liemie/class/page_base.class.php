@@ -253,11 +253,12 @@ class page_base {
 			<div class="col-md-10">
 				<?php echo $this->left_sidebar; ?>
 			</div>
-		<div class="row">
+		<!--  <div class="row">
 			<div class="col-md-2">
-				<?php echo $this->right_sidebar;?>
+				<//?php echo $this->right_sidebar;?>
 			</div>
 		</div>
+		-->
 		</div>
 		<?php $this->affiche_footer(); ?>
 	</div>
