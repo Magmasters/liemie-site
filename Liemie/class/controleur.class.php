@@ -99,24 +99,39 @@ class controleur {
 	
 	public function retourne_formulaire_login() {
 		return '
-			<article >
-				<h3>Formulaire de connexion</h3>
-				<form id="login" method="post" class="login">
-					<input type="text" name="email" id="email" placeholder="Identifiant" required/>
-					<input type="password" name="mdp" id="mdp" placeholder="Mot de passe" required/></br>
-					<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
-					<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
-					<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur</br></br>
-					<input type="submit" name="send" class="button" value="Se connecter" />
-				</form>
-				<script>function hd(){ $(\'#modal\').hide();}</script>
-				<script>function home(){ document.location.href="index.php";}</script>
-				<div  id="modal" >
-										<h1>Informations !</h1>
-										<div id="dialog1" ></div>
-										<a class="no" onclick="hd();home();">OK</a>
-				</div>
-			<article >
+				
+			<div class="well">
+				<form name="login" id="login" method="post">
+					<div>
+						<label for="email">Identifiant (email)</label>
+						<input autocomplete="on" type="text" class="form-control input-lg" id="email" name="email" value="">
+					</div>
+					<div>
+						<label for="mdp">Mot de passe</label>
+						<input autocomplete="off" type="password" class="form-control input-lg" id="mdp" name="mdp" value="">
+					</div>
+					<div class="list-group-item">
+						<label for="rblogin">Type de compte</label>
+						<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
+						<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
+						<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur
+					</div>
+					<div id="checkerror">
+					<br>
+					</div> 
+							
+					<input name="send" class="btn btn-lg btn-success" type="submit" value="Connecter">
+					<button type="button" class="btn btn-secondary"><a href="restitution_mdp.php"><img src="./image/user_edit.png" width="16" height="16"> Mot de passe oublié </a></button>
+				</form>		
+			</div>
+				
+			<script>function hd(){ $(\'#modal\').hide();}</script>
+			<script>function home(){ document.location.href="index.php";}</script>
+			<div  id="modal" >
+				<h1>Informations !</h1>
+				<div id="dialog1" ></div>
+				<a class="no" onclick="hd();home();">OK</a>
+			</div>
 	<script>
 	$("#modal").hide();
 	//Initialize the tooltips
@@ -226,7 +241,7 @@ class controleur {
           	},			
 			"rblogin":
 			{
-            	required: "Vous devez choisir famille ou administrateur"
+            	required: "Vous devez choisir un type de compte"
           	}
 		},
 		errorPlacement: function (error, element) {
@@ -242,6 +257,157 @@ class controleur {
 		
 		';
 	}
+	
+	public function retourne_formulaire_mdp_oublie() {
+		return '
+	
+			<div class="well">
+				<form name="login" id="login" method="post">
+					<div>
+						<label for="email">Identifiant (email)</label>
+						<input autocomplete="on" type="text" class="form-control input-lg" id="email" name="email" value="">
+					</div>
+					<div class="list-group-item">
+						<label for="rblogin">Type de compte</label>
+						<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
+						<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
+						<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur
+					</div>
+					<div id="checkerror">
+					<br>
+					</div>
+				
+					<input name="send" class="btn btn-lg btn-success" type="submit" value="Envoyer">
+				</form>
+			</div>
+	
+			<script>function hd(){ $(\'#modal\').hide();}</script>
+			<script>function home(){ document.location.href="index.php";}</script>
+			<div  id="modal" >
+				<h1>Informations !</h1>
+				<div id="dialog1" ></div>
+				<a class="no" onclick="hd();home();">OK</a>
+			</div>
+	<script>
+	$("#modal").hide();
+	//Initialize the tooltips
+	$("#login :input").tooltipster({
+				         trigger: "custom",
+				         onlyOne: false,
+				         position: "bottom",
+				         multiple:true,
+				         autoClose:false});
+		jQuery.validator.addMethod(
+			  "regex",
+			   function(value, element, regexp) {
+			       if (regexp.constructor != RegExp)
+			          regexp = new RegExp(regexp);
+			       else if (regexp.global)
+			          regexp.lastIndex = 0;
+			          return this.optional(element) || regexp.test(value);
+			   },"erreur champs non valide"
+			);
+	$("#login").submit(function( e ){
+        e.preventDefault();
+		$("#modal").hide();
+	
+		var $url="ajax/valide_restitution_mdp.php";
+		if($("#login").valid())
+		{
+			$categ="infirmier";
+			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbp"){$categ="patient";}
+			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
+			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
+			var formData = {
+			"email" 				: $("#email").val().toUpperCase(),
+   			"categ"					: $categ,
+			};
+				
+			var filterDataRequest = $.ajax(
+    		{
+	
+        		type: "POST",
+        		url: $url,
+        		dataType: "json",
+				encode	: true,
+        		data	: formData,
+	
+			});
+			filterDataRequest.done(function(data)
+			{
+				if ( ! data.success)
+				{
+						var $msg="erreur-></br><ul style=\"list-style-type :decimal;padding:0 5%;\">";
+						if (data.errors.message) {
+							$x=data.errors.message;
+							$msg+="<li>";
+							$msg+=$x;
+							$msg+="</li>";
+							}
+						if (data.errors.requete) {
+							$x=data.errors.requete;
+							$msg+="<li>";
+							$msg+=$x;
+							$msg+="</li>";
+							}
+	
+						$msg+="</ul>";
+				}
+				else
+				{
+						$msg="";
+						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
+				}
+	
+					$("#dialog1").html($msg);$("#modal").show();
+	
+				});
+			filterDataRequest.fail(function(jqXHR, textStatus)
+			{
+	
+     			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
+    			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
+				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
+				else if (textStatus === "parsererror"){alert("Requested JSON parse failed.");}
+				else if (textStatus === "timeout"){alert("Time out error.");}
+				else if (textStatus === "abort"){alert("Ajax request aborted.");}
+				else{alert("Uncaught Error.n" + jqXHR.responseText);}
+			});
+		}
+	});
+  
+	$("#login").validate({
+		rules:
+		{
+							
+			"email": {required: true},
+			"rblogin": {required: true}
+		},
+		messages:
+		{
+        	"email":
+          	{
+            	required: "Vous devez saisir un identifiant valide"
+          	},
+			"rblogin":
+			{
+            	required: "Vous devez choisir un type de compte"
+          	}
+		},
+		errorPlacement: function (error, element) {
+			$(element).tooltipster("update", $(error).text());
+			$(element).tooltipster("show");
+		},
+		success: function (label, element)
+		{
+			$(element).tooltipster("hide");
+		}
+   	});
+	</script>
+	
+		';
+	}
+	
 	public function genererMDP($longueur = 8) {
 		// initialiser la variable $mdp
 		$mdp = "";

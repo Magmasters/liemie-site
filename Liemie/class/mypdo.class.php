@@ -5,7 +5,8 @@ class mypdo extends PDO {
 	private $PARAM_mot_passe = 'magmasters'; // mot de passe de l'utilisateur pour se connecter
 	private $PARAM_nom_bd = 'magmasters_liemie';
 	private $connexion;
-	public function __construct() {
+	public function __construct()
+	{
 		try {
 			
 			$this->connexion = new PDO ( 'mysql:host=' . $this->PARAM_hote . ';dbname=' . $this->PARAM_nom_bd, $this->PARAM_utilisateur, $this->PARAM_mot_passe, array (
@@ -20,7 +21,8 @@ class mypdo extends PDO {
 			// echo '<script>alert ("pbs acces bdd");</script>)';
 		}
 	}
-	public function __get($propriete) {
+	public function __get($propriete)
+	{
 		switch ($propriete) {
 			case 'connexion' :
 				{
@@ -29,7 +31,8 @@ class mypdo extends PDO {
 				}
 		}
 	}
-	public function connect($tab) {
+	public function connect($tab)
+	{
 		if ($tab ['categ'] == 'infirmier') {
 			$requete = 'select * from INFIRMIER where EMAIL="' . $tab ['email'] . '" and MDP="' . $tab ['mdp'] . '";';
 		} elseif ($tab ['categ'] == 'admin') {
@@ -45,7 +48,58 @@ class mypdo extends PDO {
 		}
 		return null;
 	}
-	public function connect_mobile($tab) {
+	
+	public function restitution_mdp($tab)
+	{
+		if ($tab ['categ'] == 'infirmier') {
+			$statement = 'SELECT * FROM INFIRMIER WHERE EMAIL=:email';
+		} elseif ($tab ['categ'] == 'admin') {
+			$statement = 'SELECT * FROM ADMIN WHERE EMAIL=:email';
+		} elseif ($tab ['categ'] == 'patient') {
+			$statement = 'SELECT * FROM PATIENT WHERE EMAIL=:email';
+		}
+		
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam(':email', $tab['email'], PDO::PARAM_STR);
+		
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			$user = $sth->fetchObject();
+			
+			$statement = 'INSERT INTO JETON (LIEN) VALUES("lien_a_inserer")';
+			$sth = $this->connexion->prepare ( $statement );
+			
+			if ($sth->execute() && $sth->rowCount() > 0) {
+				$idjeton = $this->connexion->lastInsertId();
+				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/restitution_mdp.php?user='.$user->EMAIL.'&jeton='.$idjeton;
+				$jeton = md5(uniqid($user->EMAIL.''.$idjeton, true));
+				
+				$statement = 'UPDATE JETON SET LIEN=:lien WHERE ID_JETON=:idjeton';
+				$sth = $this->connexion->prepare ( $statement );
+				$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_STR);
+				$sth->bindParam(':lien', $jeton, PDO::PARAM_STR);
+				
+				if ($sth->execute() && $sth->rowCount() > 0) {
+					
+					$smtp = new SMTP('smtp-magmasters.alwaysdata.net', 'magmasters@alwaysdata.net', 'magmasters', 587);
+					
+					$corps = 'Pour récupérer votre mot de passe, veuillez suivre le lien suivant : '.$lien. ' !';
+					
+					$smtp->smtp_mail($user->EMAIL, 'Kaliémie : Récupération de votre mot de passe.', $corps);// Envoie du mail
+					
+					if (!$smtp->erreur){
+						return true;
+					} else{
+						//erreur détectée
+					}
+				}
+			}
+			
+		}
+		return false;
+	}
+	
+	public function connect_mobile($tab)
+	{
 		$tab_infirmier = array ();
 		$statement = 'SELECT * FROM INFIRMIER where EMAIL = :email AND MDP = :mdp';
 		$sth = $this->connexion->prepare ( $statement );
