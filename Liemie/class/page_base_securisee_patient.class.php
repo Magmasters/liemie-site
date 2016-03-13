@@ -20,9 +20,9 @@ class page_base_securisee_patient extends page_base {
 <ul class="nav navbar-nav">
 	<li class="dropdown"><a href="" class="dropdown-toggle"
 		data-toggle="dropdown" role="button" aria-haspopup="true"
-		aria-expanded="false">Modifier mon mot de passe<span class="caret"></span></a>
+		aria-expanded="false">Gestion du compte<span class="caret"></span></a>
 		<ul class="dropdown-menu">
-			<li><a href="">Modifier mes informations</a></li>
+			<li><a href="">Gestion des informations</a></li>
 			<li><a href="">Poster un témoignage</a></li>
 			<li><a href="">Planning</a></li>
 			<li><a href="">Détails visites</a></li>
