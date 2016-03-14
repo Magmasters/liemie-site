@@ -502,7 +502,7 @@ class mypdo extends PDO {
 		$sth->bindParam ( ':id', $idpatient, PDO::PARAM_INT );
 		if ($sth->execute () && $sth->rowCount () > 0) {
 				
-			$row_infirmier = $sth->fetchObject();
+			$row_patient = $sth->fetchObject();
 				
 			$statement = 'SELECT * FROM ADRESSE WHERE ID_ADRESSE = :id_adr';
 			$sth = $this->connexion->prepare($statement);
@@ -553,7 +553,7 @@ class mypdo extends PDO {
 			return false;
 		}
 	
-		$statement = 'DELETE FROM AFFECTER_INFIRMIER WHERE ID_PATIENT = :id';
+		$statement = 'DELETE FROM AFFECTER_PATIENT WHERE ID_PATIENT = :id';
 		$sth = $this->connexion->prepare ( $statement );
 		$sth->bindParam ( ':id', $tab['id_patient'], PDO::PARAM_INT );
 	

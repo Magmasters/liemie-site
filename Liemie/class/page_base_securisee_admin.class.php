@@ -41,9 +41,9 @@ class page_base_securisee_admin extends page_base {
 			
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des patients</a>
 				<ul class="dropdown-menu">
-					<li><a href="">Inscrire un patient</a></li>
-					<li><a href="">Modifier un patient</a></li>
-					<li><a href="">Supprimer une inscription patient</a></li>
+					<li><a href="ajout_patient.php">Inscrire un patient</a></li>
+					<li><a href="modif_patient.php">Modifier un patient</a></li>
+					<li><a href="supp_patient.php">Supprimer une inscription patient</a></li>
 				</ul>
 			</li>
 			
