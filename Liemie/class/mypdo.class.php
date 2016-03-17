@@ -49,6 +49,55 @@ class mypdo extends PDO {
 		return null;
 	}
 	
+	public function reinit_mdp($tab)
+	{
+		
+		$hash_jeton = md5($tab['user'].''.$tab['idjeton']);
+		
+		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':idjeton', $tab['idjeton'], PDO::PARAM_INT);
+		$sth->bindParam(':lien', $hash_jeton, PDO::PARAM_STR);
+		
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			//echo "jeton incorrect ! ".$hash_jeton . ' - '.$tab['idjeton'];
+			return false;
+		}
+		
+		$statement = 'DELETE FROM JETON WHERE ID_JETON=:idjeton';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':idjeton', $tab['idjeton'], PDO::PARAM_INT);
+		
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			//echo "jeton incorrect ! ".$hash_jeton . ' - '.$tab['idjeton'];
+			return false;
+		}
+		
+		if ($tab ['categ'] == 'infirmier') {
+			$statement = 'UPDATE INFIRMIER SET MDP=:mdp WHERE EMAIL=:email';
+		} elseif ($tab ['categ'] == 'admin') {
+			$statement = 'UPDATE ADMIN SET MDP=:mdp WHERE EMAIL=:email';
+		} elseif ($tab ['categ'] == 'patient') {
+			$statement = 'UPDATE PATIENT SET MDP=:mdp WHERE EMAIL=:email';
+		} else {
+			//echo "type incorrect";
+			return false; //si le type n'est pas correct on renvoit faux
+		}
+		
+		$hash_mdp = md5($tab['mdp']);
+		
+		$sth = $this->connexion->prepare ( $statement );
+		$sth->bindParam(':email', $tab['user'], PDO::PARAM_STR);
+		$sth->bindParam(':mdp', $hash_mdp, PDO::PARAM_STR);
+		
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			//echo "mdp : ". $tab['mdp'].' hash : '. $hash_mdp;
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public function restitution_mdp($tab)
 	{
 		if ($tab ['categ'] == 'infirmier') {
@@ -57,6 +106,8 @@ class mypdo extends PDO {
 			$statement = 'SELECT * FROM ADMIN WHERE EMAIL=:email';
 		} elseif ($tab ['categ'] == 'patient') {
 			$statement = 'SELECT * FROM PATIENT WHERE EMAIL=:email';
+		} else {
+			return false; //si le type n'est pas correct on renvoit faux
 		}
 		
 		$sth = $this->connexion->prepare ( $statement );
@@ -70,8 +121,8 @@ class mypdo extends PDO {
 			
 			if ($sth->execute() && $sth->rowCount() > 0) {
 				$idjeton = $this->connexion->lastInsertId();
-				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/restitution_mdp.php?user='.$user->EMAIL.'&jeton='.$idjeton;
-				$jeton = md5(uniqid($user->EMAIL.''.$idjeton, true));
+				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/Liemie/restitution_mdp.php?utype='.$tab ['categ'].'&user='.$user->EMAIL.'&jeton='.$idjeton;
+				$jeton = md5($user->EMAIL.''.$idjeton);
 				
 				$statement = 'UPDATE JETON SET LIEN=:lien WHERE ID_JETON=:idjeton';
 				$sth = $this->connexion->prepare ( $statement );
@@ -80,16 +131,12 @@ class mypdo extends PDO {
 				
 				if ($sth->execute() && $sth->rowCount() > 0) {
 					
-					$smtp = new SMTP('smtp-magmasters.alwaysdata.net', 'magmasters@alwaysdata.net', 'magmasters', 587);
-					
 					$corps = 'Pour récupérer votre mot de passe, veuillez suivre le lien suivant : '.$lien. ' !';
-					
-					$smtp->smtp_mail($user->EMAIL, 'Kaliémie : Récupération de votre mot de passe.', $corps);// Envoie du mail
-					
-					if (!$smtp->erreur){
+					$unmail = new MyMailer('magmasters.sio@gmail.com', $user->EMAIL, 'Kaliémie : Récupération de votre mot de passe.', $corps, 'magmasters.sio@gmail.com', 'siocarcouet', 'ssl://smtp.gmail.com', 465);
+					if ($unmail->envoyerMail()) {
 						return true;
-					} else{
-						//erreur détectée
+					} else {
+						//echo $unmail->getErreur();
 					}
 				}
 			}

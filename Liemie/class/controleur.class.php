@@ -258,6 +258,158 @@ class controleur {
 		';
 	}
 	
+	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
+		return '
+		
+			<div class="well">
+				<form name="login" id="login" method="post">
+					<div>
+						<label for="mdp">Nouveau mot de passe</label>
+						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp" name="mdp" value="">
+					</div>
+					<div>
+						<label for="mdp2">Confirmation mot de passe</label>
+						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp2" name="mdp2" value="">
+					</div>
+					<div id="checkerror">
+					<br>
+					</div>
+		
+					<input name="send" class="btn btn-lg btn-success" type="submit" value="Envoyer">
+				</form>
+			</div>
+		
+			<script>function hd(){ $(\'#modal\').hide();}</script>
+			<script>function home(){ document.location.href="index.php";}</script>
+			<div  id="modal" >
+				<h1>Informations !</h1>
+				<div id="dialog1" ></div>
+				<a class="no" onclick="hd();home();">OK</a>
+			</div>
+	<script>
+	$("#modal").hide();
+	//Initialize the tooltips
+	$("#login :input").tooltipster({
+				         trigger: "custom",
+				         onlyOne: false,
+				         position: "bottom",
+				         multiple:true,
+				         autoClose:false});
+		jQuery.validator.addMethod(
+			  "regex",
+			   function(value, element, regexp) {
+			       if (regexp.constructor != RegExp)
+			          regexp = new RegExp(regexp);
+			       else if (regexp.global)
+			          regexp.lastIndex = 0;
+			          return this.optional(element) || regexp.test(value);
+			   },"erreur champs non valide"
+			);
+	$("#login").submit(function( e ){
+        e.preventDefault();
+		$("#modal").hide();
+		
+		var $url="ajax/valide_reinit_mdp.php";
+				
+		$idjeton = '. json_encode($idjeton) .'
+		$user = '. json_encode($user) .'
+		$categ = '. json_encode($categ) .'
+				
+		if($("#login").valid())
+		{
+			var formData = {
+				"mdp" 					: $("#mdp").val(),
+				"mdp2" 					: $("#mdp2").val(),
+	   			"categ"					: $categ,
+				"idjeton" 				: $idjeton,
+				"user"					: $user,
+			};
+		
+			var filterDataRequest = $.ajax(
+    		{
+		
+        		type: "POST",
+        		url: $url,
+        		dataType: "json",
+				encode	: true,
+        		data	: formData,
+		
+			});
+			filterDataRequest.done(function(data)
+			{
+				if ( ! data.success)
+				{
+						var $msg="erreur-></br><ul style=\"list-style-type :decimal;padding:0 5%;\">";
+						if (data.errors.message) {
+							$x=data.errors.message;
+							$msg+="<li>";
+							$msg+=$x;
+							$msg+="</li>";
+							}
+						if (data.errors.requete) {
+							$x=data.errors.requete;
+							$msg+="<li>";
+							$msg+=$x;
+							$msg+="</li>";
+							}
+		
+						$msg+="</ul>";
+				}
+				else
+				{
+						$msg="";
+						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
+				}
+		
+					$("#dialog1").html($msg);$("#modal").show();
+		
+				});
+			filterDataRequest.fail(function(jqXHR, textStatus)
+			{
+		
+     			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
+    			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
+				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
+				else if (textStatus === "parsererror"){alert("Requested JSON parse failed.");}
+				else if (textStatus === "timeout"){alert("Time out error.");}
+				else if (textStatus === "abort"){alert("Ajax request aborted.");}
+				else{alert("Uncaught Error.n" + jqXHR.responseText);}
+			});
+		}
+	});
+		
+	$("#login").validate({
+		rules:
+		{
+				
+			"mdp": {required: true},
+			"mdp2": {required: true}
+		},
+		messages:
+		{
+        	"mdp":
+          	{
+            	required: "Les mot de passes doivent être identiques !"
+          	},
+			"mdp2":
+			{
+            	required: "Les mot de passes doivent être identiques !"
+          	}
+		},
+		errorPlacement: function (error, element) {
+			$(element).tooltipster("update", $(error).text());
+			$(element).tooltipster("show");
+		},
+		success: function (label, element)
+		{
+			$(element).tooltipster("hide");
+		}
+   	});
+	</script>
+		
+		';
+	}
+	
 	public function retourne_formulaire_mdp_oublie() {
 		return '
 	
