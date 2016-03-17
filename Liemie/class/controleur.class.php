@@ -259,6 +259,16 @@ class controleur {
 	}
 	
 	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
+		
+		if (!$this->vpdo->validite_jeton($idjeton, $user)) {
+			return '
+						<div class="alert alert-danger">
+							<p> Jeton invalide </p>
+						</div>
+						<button type="button" class="btn btn-secondary"><a href="index.php"><img src="./image/exit.png" width="16" height="16"> Retour accueil </a></button>
+					';
+		}
+		
 		return '
 		
 			<div class="well">
@@ -901,75 +911,23 @@ class controleur {
 			$row = $this->vpdo->trouve_infirmier ( $idpatient);
 			if ($row != null) {
 				$identifiant = $row->identifiant;
-				$nom1 = $row->nom1;
-				$prenom1 = $row->prenom1;
-				$adresse11 = $row->adresse11;
-				if (isset ( $row->adresse12 )) {
-					$adresse12 = $row->adresse12;
+				$nom = $row->nom1;
+				$prenom = $row->prenom1;
+				$adresse1 = $row->adresse1;
+				if (isset ( $row->adresse2 )) {
+					$adresse2 = $row->adresse2;
 				}
-				$cp1 = $row->cp1;
-				$ville1 = $row->ville1;
-				if (isset ( $row->mail1 )) {
-					$mail1 = $row->mail1;
+				$cp = $row->cp;
+				$ville = $row->ville;
+				if (isset ( $row->mail )) {
+					$mail = $row->mail;
 				}
-				$tel11 = $row->tel11;
-				if (isset ( $row->tel12 )) {
-					$tel12 = $row->tel12;
+				$tel1 = $row->tel1;
+				if (isset ( $row->tel2 )) {
+					$tel2 = $row->tel2;
 				}
-				if (isset ( $row->tel13 )) {
-					$tel13 = $row->tel13;
-				}
-				if ($row->fonction1 == 'pere') {
-					$checkpere1 = 'checked';
-				}
-				if ($row->fonction1 == 'mere') {
-					$checkmere1 = 'checked';
-				}
-				if ($row->fonction1 != 'pere' && $row->fonction1 != 'mere') {
-					$checkautre1 = 'checked';
-					$autre1 = $row->fonction1;
-				}
-				if (isset ( $row->nom2 )) {
-					$nom2 = $row->nom2;
-				}
-				if (isset ( $row->prenom2 )) {
-					$prenom2 = $row->prenom2;
-				}
-				if (isset ( $row->adresse21 )) {
-					$adresse21 = $row->adresse21;
-				}
-				if (isset ( $row->adresse22 )) {
-					$adresse22 = $row->adresse22;
-				}
-				if (isset ( $row->cp2 )) {
-					$cp2 = $row->cp2;
-				}
-				if (isset ( $row->ville2 )) {
-					$ville2 = $row->ville2;
-				}
-				if (isset ( $row->mail2 )) {
-					$mail2 = $row->mail2;
-				}
-				if (isset ( $row->tel21 )) {
-					$tel21 = $row->tel21;
-				}
-				if (isset ( $row->tel22 )) {
-					$tel22 = $row->tel22;
-				}
-				if (isset ( $row->tel23 )) {
-					$tel23 = $row->tel23;
-				}
-				if (isset ( $row->fonction2 )) {
-					if ($row->fonction2 == 'pere') {
-						$checkpere2 = 'checked';
-					}
-					if ($row->fonction2 == 'mere') {
-						$checkmere2 = 'checked';
-					}
-					if ($row->fonction2 != 'pere' && $row->fonction2 != 'mere') {
-						$checkautre2 = 'checked';
-						$autre2 = $row->fonction2;
-					}
+				if (isset ( $row->tel3 )) {
+					$tel3 = $row->tel3;
 				}
 			}
 		}
@@ -996,16 +954,16 @@ class controleur {
 							';
 		}
 		$form = $form . '
-					<input type="text" name="nom" id="nom" placeholder="Nom patient" value="' . $nom1 . '" required/>
-					<input type="text" name="prenom" id="prenom" placeholder="Prenom patient" value="' . $prenom1 . '" required/></br>
-					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse11 . '" required/>
-					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse12 . '" /></br>
-					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp1 . '" required/>
-					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville1 . '" required/></br>
-					<input type="text" name="mail" id="mail" placeholder="mail" value="' . $mail1 . '" required/></br>
-					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel11 . '" required/>
-					<input type="text" name="tel2" id="tel1" placeholder="Tel portable" value="' . $tel12 . '" />
-					<input type="text" name="tel3" id="tel2" placeholder="Tel travail" value="' . $tel13 . '" /></br>
+					<input type="text" name="nom" id="nom" placeholder="Nom patient" value="' . $nom . '" required/>
+					<input type="text" name="prenom" id="prenom" placeholder="Prenom patient" value="' . $prenom . '" required/></br>
+					<input type="text" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse1 . '" required/>
+					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse2 . '" /></br>
+					<input type="text" name="cp" id="cp1" placeholder="Code Postal" value="' . $cp . '" required/>
+					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville . '" required/></br>
+					<input type="text" name="mail" id="mail" placeholder="mail" value="' . $mail . '" required/></br>
+					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel1 . '" required/>
+					<input type="text" name="tel2" id="tel1" placeholder="Tel portable" value="' . $tel2 . '" />
+					<input type="text" name="tel3" id="tel2" placeholder="Tel travail" value="' . $tel3 . '" /></br>
 		
 					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
 				</form>
@@ -1048,16 +1006,16 @@ class controleur {
 			var formData = {
 				"identifiant"			: $("#identifiant").val(),
 				"mp"					: $("#mp").val(),
-				"nom1" 					: $("#nom").val().toUpperCase(),
-				"prenom1"				: $("#prenom").val(),
-				"adresse11"				: $("#adresse1").val(),
-				"adresse12"				: $("#adresse2").val(),
-				"cp1"					: $("#cp").val(),
-				"ville1"				: $("#ville").val(),
-				"mail1"					: $("#mail").val(),
-				"tel11"					: $("#tel1").val(),
-				"tel12"					: $("#tel2").val(),
-				"tel13"					: $("#tel3").val(),
+				"nom" 					: $("#nom").val().toUpperCase(),
+				"prenom"				: $("#prenom").val(),
+				"adresse1"				: $("#adresse1").val(),
+				"adresse2"				: $("#adresse2").val(),
+				"cp"					: $("#cp").val(),
+				"ville"				: $("#ville").val(),
+				"mail"					: $("#mail").val(),
+				"tel1"					: $("#tel1").val(),
+				"tel2"					: $("#tel2").val(),
+				"tel3"					: $("#tel3").val(),
 			};
 	
 			var filterDataRequest = $.ajax(
@@ -1117,20 +1075,14 @@ class controleur {
 		rules:
 		{
 	
-			"nom1": {required: true},
-			"prenom1": {required: true},
-			"adresse1": {required: true},
-			"tel11": {required: true,regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel12": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel13": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel21": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel22": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"tel23": {regex: /^(\+33|0033|0)[0-9]{9}$/},
-			"cp1":{required: true,regex:/^\d{5}$/},
-			"ville1": {required: true},
-			"mail1": {required: true,regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/},
-			"cp2":{regex:/^\d{5}$/},
-			"mail2": {regex: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/}
+			"nom": {required: true},
+			"prenom": {required: true},
+			"adresse": {required: true},
+			"tel1": {required: true,regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"tel2": {regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"tel3": {regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"cp":{required: true,regex:/^\d{5}$/},
+			"ville": {required: true},  
 		},
 		messages:
 		{

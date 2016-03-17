@@ -717,5 +717,20 @@ class mypdo extends PDO {
 			return false;
 		}
 	}
+	
+	public function validite_jeton($idjeton, $user)
+	{
+		$hash_jeton = md5($user.''.$idjeton);
+		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_INT);
+		$sth->bindValue(':lien', $hash_jeton);
+		
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 }
 ?>
