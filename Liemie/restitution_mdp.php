@@ -14,9 +14,25 @@ $controleur = new controleur ();
 $site->right_sidebar = $site->rempli_right_sidebar ();
 
 if (isset($_GET['jeton'])) {
-	$idjeton = $_GET['jeton'];
-	$user = $_GET['user'];
-	$categ = $_GET['utype'];
+	$jeton = $_GET['jeton'];
+	$jeton = str_replace(' ', '+', $jeton);
+	$jeton_decrypt = Cryptage::mc_decrypt($jeton);
+	$parametres = array();
+	
+	//echo 'JETON - '.$jeton.'<br>';
+	//echo 'JETON_DECRYPT - '.$jeton_decrypt;
+	
+	foreach (explode('&', $jeton_decrypt) as $chunk) {
+		$param = explode("=", $chunk);
+	
+		if ($param) {
+			$parametres[urldecode($param[0])] = urldecode($param[1]);
+		}
+	}
+	
+	$idjeton = $parametres['jeton'];
+	$user = $parametres['user'];
+	$categ = $parametres['utype'];
 	
 	$site->left_sidebar = $controleur->retourne_formulaire_reinit_mdp ($idjeton, $user, $categ);
 	

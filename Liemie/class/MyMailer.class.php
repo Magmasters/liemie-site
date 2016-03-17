@@ -18,7 +18,8 @@ Class MyMailer {
 		$this->headers = array(
 							'From' => $From,
 							'To' => $To,
-							'Subject' => $Subject
+							'Subject' => $Subject,
+							'Content-Type' => 'text/html'
 		);
 
 		$this->smtp = Mail::factory('smtp', array(

@@ -260,7 +260,7 @@ class controleur {
 	
 	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
 		
-		if (!$this->vpdo->validite_jeton($idjeton, $user)) {
+		if (!$this->vpdo->validite_jeton($idjeton, $user, $categ)) {
 			return '
 						<div class="alert alert-danger">
 							<p> Jeton invalide </p>

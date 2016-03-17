@@ -121,17 +121,22 @@ class mypdo extends PDO {
 			
 			if ($sth->execute() && $sth->rowCount() > 0) {
 				$idjeton = $this->connexion->lastInsertId();
-				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/Liemie/restitution_mdp.php?utype='.$tab ['categ'].'&user='.$user->EMAIL.'&jeton='.$idjeton;
-				$jeton = md5($user->EMAIL.''.$idjeton);
+				
+				$jeton = 'utype='.$tab ['categ'].'&user='.$user->EMAIL.'&jeton='.$idjeton;
+				$jeton_crypte = Cryptage::mc_encrypt($jeton);
+				
+				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/Liemie/restitution_mdp.php?jeton='.$jeton_crypte;
+				
+				$hash_jeton = md5($user->EMAIL.''.$idjeton.''.$tab ['categ']);
 				
 				$statement = 'UPDATE JETON SET LIEN=:lien WHERE ID_JETON=:idjeton';
 				$sth = $this->connexion->prepare ( $statement );
 				$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_STR);
-				$sth->bindParam(':lien', $jeton, PDO::PARAM_STR);
+				$sth->bindParam(':lien', $hash_jeton, PDO::PARAM_STR);
 				
 				if ($sth->execute() && $sth->rowCount() > 0) {
 					
-					$corps = 'Pour récupérer votre mot de passe, veuillez suivre le lien suivant : '.$lien. ' !';
+					$corps = 'Pour récupérer votre mot de passe, veuillez suivre le lien suivant : <a href="'.$lien.'">Réinitialiser le mot de passe</a> !' ;
 					$unmail = new MyMailer('magmasters.sio@gmail.com', $user->EMAIL, 'Kaliémie : Récupération de votre mot de passe.', $corps, 'magmasters.sio@gmail.com', 'siocarcouet', 'ssl://smtp.gmail.com', 465);
 					if ($unmail->envoyerMail()) {
 						return true;
@@ -718,9 +723,9 @@ class mypdo extends PDO {
 		}
 	}
 	
-	public function validite_jeton($idjeton, $user)
+	public function validite_jeton($idjeton, $user, $categ)
 	{
-		$hash_jeton = md5($user.''.$idjeton);
+		$hash_jeton = md5($user.''.$idjeton.''.$categ);
 		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_INT);
