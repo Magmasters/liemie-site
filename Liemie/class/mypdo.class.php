@@ -52,7 +52,7 @@ class mypdo extends PDO {
 	public function reinit_mdp($tab)
 	{
 		
-		$hash_jeton = md5($tab['user'].''.$tab['idjeton']);
+		$hash_jeton = md5($tab['user'].''.$tab['idjeton'].''.$tab['categ']);
 		
 		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
 		$sth = $this->connexion->prepare($statement);
