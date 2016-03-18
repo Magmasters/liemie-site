@@ -239,19 +239,35 @@ class mypdo extends PDO {
 	
 	public function ajouter_infirmier($tab)
 	{
-		$statement = 'INSERT INTO ADRESSE (NUM, RUE, VILLE, CODE_POSTAL) VALUES(:num, :rue, :ville, :cp)';
+		//On vérifie si l'adresse n'existe pas déjà
+		$statement = 'SELECT * FROM ADRESSE WHERE NUM=:num AND RUE=:rue AND VILLE=:ville AND CODE_POSTAL=:cp';
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':num', $tab['num_rue'], PDO::PARAM_INT);
 		$sth->bindParam(':rue', $tab['nom_rue'], PDO::PARAM_STR);
 		$sth->bindParam(':ville', $tab['ville'], PDO::PARAM_STR);
 		$sth->bindParam(':cp', $tab['cp'], PDO::PARAM_STR);
 		
-		//Si l'ajout de l'adresse dans la table adresse échoué on revoit FALSE
-		//sinon on continue l'insertion
-		if (!$sth->execute() || $sth->rowCount() <= 0) {
-			return false;
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			//Si l'adresse existe déjà dans la BDD on récupère son ID pour l'utiliser sans ajouter un duplicata
+			$adresse_trouvee = $sth->fetchObject();
+			$tab['id_adresse'] = $adresse_trouvee->ID_ADRESSE;
+		} elseif ($sth->execute() && $sth->rowCount() <= 0) {
+			$statement = 'INSERT INTO ADRESSE (NUM, RUE, VILLE, CODE_POSTAL) VALUES(:num, :rue, :ville, :cp)';
+			$sth = $this->connexion->prepare($statement);
+			$sth->bindParam(':num', $tab['num_rue'], PDO::PARAM_INT);
+			$sth->bindParam(':rue', $tab['nom_rue'], PDO::PARAM_STR);
+			$sth->bindParam(':ville', $tab['ville'], PDO::PARAM_STR);
+			$sth->bindParam(':cp', $tab['cp'], PDO::PARAM_STR);
+			
+			//Si l'ajout de l'adresse dans la table adresse échoué on revoit FALSE
+			//sinon on continue l'insertion
+			if (!$sth->execute() || $sth->rowCount() <= 0) {
+				return false;
+			} else {
+				$tab['id_adresse'] = $this->connexion->lastInsertId();
+			}
 		} else {
-			$tab['id_adresse'] = $this->connexion->lastInsertId();
+			return false;
 		}
 		
 		$statement = 'INSERT INTO INFIRMIER (NOM, PRENOM, DATE_NAISSANCE, EMAIL, MDP, TEL1, TEL2, TEL3, ID_ADRESSE) VALUES (:nom, :prenom, :date_naiss, :email, :mdp, :tel1, :tel2, :tel3, :id_adresse)';
@@ -417,7 +433,10 @@ class mypdo extends PDO {
 		$sth->bindParam ( ':id', $tab['id_adresse'], PDO::PARAM_INT );
 			
 		if (!$sth->execute() || $sth->rowCount() <= 0) {
-			return false;
+			/*
+			 * On ne renvoit pas faux même si la suppression de l'adresse a échouée
+			 * celle-ci pouvant être utilisée pour une autre personne.
+			 */
 		}
 		
 		return true;
