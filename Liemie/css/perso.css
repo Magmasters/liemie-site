@@ -14,6 +14,14 @@
 	border-radius: 4px;
 }
 
+.form-group {
+	margin-bottom: 30px;
+}
+
+.formulaire-infirmier .form-control {
+	max-width: 300px;
+}
+
 footer {
 	margin-top: 50px;
 	position: relative;
@@ -173,3 +181,19 @@ footer {
     padding: 5px 10px 5px 10px;
     border-radius: 27px;
 }
+
+.modal-body .form-horizontal .control-label {
+    text-align: left;
+}
+.modal-body .form-horizontal .col-sm-offset-2 {
+    margin-left: 15px;
+}
+
+#message-infos-login {
+	margin-top: 20px;
+}
+
+/*
+* Tableau responsive
+*/
+

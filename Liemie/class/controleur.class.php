@@ -98,164 +98,205 @@ class controleur {
 	}
 	
 	public function retourne_formulaire_login() {
-		return '
-				
-			<div class="well">
-				<form name="login" id="login" method="post">
-					<div>
-						<label for="email">Identifiant (email)</label>
-						<input autocomplete="on" type="text" class="form-control input-lg" id="email" name="email" value="">
-					</div>
-					<div>
-						<label for="mdp">Mot de passe</label>
-						<input autocomplete="off" type="password" class="form-control input-lg" id="mdp" name="mdp" value="">
-					</div>
-					<div class="list-group-item">
-						<label for="rblogin">Type de compte</label>
-						<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
-						<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
-						<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur
-					</div>
-					<div id="checkerror">
-					<br>
-					</div> 
-							
-					<input name="send" class="btn btn-lg btn-success" type="submit" value="Connecter">
-					<button type="button" class="btn btn-secondary"><a href="restitution_mdp.php"><img src="./image/user_edit.png" width="16" height="16"> Mot de passe oublié </a></button>
-				</form>		
-			</div>
-				
-			<script>function hd(){ $(\'#modal\').hide();}</script>
-			<script>function home(){ document.location.href="index.php";}</script>
-			<div  id="modal" >
-				<h1>Informations !</h1>
-				<div id="dialog1" ></div>
-				<a class="no" onclick="hd();home();">OK</a>
-			</div>
-	<script>
-	$("#modal").hide();
-	//Initialize the tooltips
-	$("#login :input").tooltipster({
-				         trigger: "custom",
-				         onlyOne: false,
-				         position: "bottom",
-				         multiple:true,
-				         autoClose:false});
-		jQuery.validator.addMethod(
-			  "regex",
-			   function(value, element, regexp) {
-			       if (regexp.constructor != RegExp)
-			          regexp = new RegExp(regexp);
-			       else if (regexp.global)
-			          regexp.lastIndex = 0;
-			          return this.optional(element) || regexp.test(value);
-			   },"erreur champs non valide"
-			);	
-	$("#login").submit(function( e ){
-        e.preventDefault();
-		$("#modal").hide();
-						
-		var $url="ajax/valide_connect.php";
-		if($("#login").valid())
-		{
-			$categ="infirmier";
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbp"){$categ="patient";}
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
-			var formData = {
-			"email" 				: $("#email").val().toUpperCase(),
-   			"mdp"					: $("#mdp").val(),
-   			"categ"					: $categ												   		
-			};	
-							
-			var filterDataRequest = $.ajax(
-    		{
-												
-        		type: "POST", 
-        		url: $url,
-        		dataType: "json",
-				encode          : true,
-        		data: formData,	
-
-			});
-			filterDataRequest.done(function(data)
-			{
-				if ( ! data.success)
-				{		
-						var $msg="erreur-></br><ul style=\"list-style-type :decimal;padding:0 5%;\">";
-						if (data.errors.message) {
-							$x=data.errors.message;
-							$msg+="<li>";
-							$msg+=$x;
-							$msg+="</li>";
-							}
-						if (data.errors.requete) {
-							$x=data.errors.requete;
-							$msg+="<li>";
-							$msg+=$x;
-							$msg+="</li>";
-							}
-						
-						$msg+="</ul>";
-				}
-				else
-				{
-						$msg="";
-						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
-				}
-				
-					$("#dialog1").html($msg);$("#modal").show();
-
-				});
-			filterDataRequest.fail(function(jqXHR, textStatus)
-			{
-				
-     			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
-    			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
-				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
-				else if (textStatus === "parsererror"){alert("Requested JSON parse failed.");}
-				else if (textStatus === "timeout"){alert("Time out error.");}
-				else if (textStatus === "abort"){alert("Ajax request aborted.");}
-				else{alert("Uncaught Error.n" + jqXHR.responseText);}
-			});
-		}
-	});
-   
-	$("#login").validate({
-		rules:
-		{
-													
-			"email": {required: true},
-			"mdp": {required: true},
-			"rblogin": {required: true}
-		},
-		messages:
-		{
-        	"email":
-          	{
-            	required: "Vous devez saisir un identifiant valide"
-          	},
-			"mdp":
-          	{
-            	required: "Vous devez saisir un mot de passe valide"
-          	},			
-			"rblogin":
-			{
-            	required: "Vous devez choisir un type de compte"
-          	}
-		},
-		errorPlacement: function (error, element) {
-			$(element).tooltipster("update", $(error).text());
-			$(element).tooltipster("show");
-		},
-		success: function (label, element)
-		{
-			$(element).tooltipster("hide");
-		}
-   	});
-	</script>					
 		
-		';
+		return '
+					<!-- Modal -->
+					<div class="modal fade" id="modalConnexion" tabindex="-1" role="dialog" 
+					     aria-labelledby="myModalLabel" aria-hidden="true">
+					    <div class="modal-dialog">
+					        <div class="modal-content">
+					            <!-- Modal Header -->
+					            <div class="modal-header">
+					                <button type="button" class="close" 
+					                   data-dismiss="modal">
+					                       <span aria-hidden="true">&times;</span>
+					                       <span class="sr-only">Close</span>
+					                </button>
+					                <h4 class="modal-title" id="myModalLabel">
+					                    Connexion - accés sécurisé
+					                </h4>
+					            </div>
+					            
+					            <!-- Modal Body -->
+					            <div class="modal-body">
+					                
+					                <form role="form" name="login" id="login" method="post">
+										<div class="form-group">
+											<label for="email">Identifiant (email)</label>
+											<input autocomplete="on" type="text" class="form-control input-lg" id="email" name="email" value="">
+										</div>
+										<div class="form-group">
+											<label for="mdp">Mot de passe</label>
+											<input autocomplete="off" type="password" class="form-control input-lg" id="mdp" name="mdp" value="">
+										</div>
+										<div class="checkbox">
+											<label for="rblogin">Type de compte</label>
+											<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
+											<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
+											<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur
+										</div>
+										<button type="submit" class="btn btn-default">Valider</button>
+				
+										<button type="button" class="btn btn-secondary"><a href="restitution_mdp.php"><img src="./image/user_edit.png" width="16" height="16"> Mot de passe oublié </a></button>
+				
+										<!-- Conteneur des messages retournés par le script de validation ajax -->
+										<div id="message-infos-login">
+										</div>
+				
+					                </form>
+					                
+					                
+					            </div>
+					            
+					            <!-- Modal Footer -->
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					
+				
+					<script>
+				
+					function home(){ document.location.href="index.php";}
+				
+					//Initialize the tooltips
+					$("#login :input").tooltipster({
+								         trigger: "custom",
+								         onlyOne: false,
+								         position: "bottom",
+								         multiple:true,
+								         autoClose:false});
+						jQuery.validator.addMethod(
+							  "regex",
+							   function(value, element, regexp) {
+							       if (regexp.constructor != RegExp)
+							          regexp = new RegExp(regexp);
+							       else if (regexp.global)
+							          regexp.lastIndex = 0;
+							          return this.optional(element) || regexp.test(value);
+							   },"erreur champs non valide"
+							);	
+					$("#login").submit(function( e ){
+				        e.preventDefault();
+						$("#message-infos-login").hide();
+										
+						var $url="ajax/valide_connect.php";
+						if($("#login").valid())
+						{
+							$categ="infirmier";
+							if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbp"){$categ="patient";}
+							if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
+							if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
+							var formData = {
+							"email" 				: $("#email").val().toUpperCase(),
+				   			"mdp"					: $("#mdp").val(),
+				   			"categ"					: $categ												   		
+							};	
+											
+							var filterDataRequest = $.ajax(
+				    		{
+																
+				        		type: "POST", 
+				        		url: $url,
+				        		dataType: "json",
+								encode          : true,
+				        		data: formData,	
+				
+							});
+							filterDataRequest.done(function(data)
+							{
+								if ( ! data.success)
+								{		
+										var $msg="erreur-></br><ul style=\"list-style-type :decimal;padding:0 5%;\">";
+										if (data.errors.message) {
+											$x=data.errors.message;
+											$msg+="<li>";
+											$msg+=$x;
+											$msg+="</li>";
+											}
+										if (data.errors.requete) {
+											$x=data.errors.requete;
+											$msg+="<li>";
+											$msg+=$x;
+											$msg+="</li>";
+											}
+										
+										$msg+="</ul>";
+				
+										//$("#message-infos-login").toggleClass("alert alert-danger");
+				
+										$("#message-infos-login").attr("class","alert alert-danger");
+								}
+								else
+								{
+										$msg="";
+										if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
+				
+										$("#message-infos-login").attr("class","alert alert-success");
+									    
+										window.setTimeout(function(){
+									
+									        //après 3 sec on redirige vers la page index.php
+									        window.location.href = "index.php";
+									
+									    }, 3000);
+								}
+								
+								//On affiche le message retourné par la page de validation ajax.
+								$("#message-infos-login").html($msg);
+								$("#message-infos-login").show();
+				
+								});
+							filterDataRequest.fail(function(jqXHR, textStatus)
+							{
+								
+				     			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
+				    			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
+								else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
+								else if (textStatus === "parsererror"){alert("Requested JSON parse failed.");}
+								else if (textStatus === "timeout"){alert("Time out error.");}
+								else if (textStatus === "abort"){alert("Ajax request aborted.");}
+								else{alert("Uncaught Error.n" + jqXHR.responseText);}
+							});
+						}
+					});
+				   
+					$("#login").validate({
+						rules:
+						{
+																	
+							"email": {required: true},
+							"mdp": {required: true},
+							"rblogin": {required: true}
+						},
+						messages:
+						{
+				        	"email":
+				          	{
+				            	required: "Vous devez saisir un identifiant valide"
+				          	},
+							"mdp":
+				          	{
+				            	required: "Vous devez saisir un mot de passe valide"
+				          	},			
+							"rblogin":
+							{
+				            	required: "Vous devez choisir un type de compte"
+				          	}
+						},
+						errorPlacement: function (error, element) {
+							$(element).tooltipster("update", $(error).text());
+							$(element).tooltipster("show");
+						},
+						success: function (label, element)
+						{
+							$(element).tooltipster("hide");
+						}
+				   	});
+					</script>
+				';
 	}
 	
 	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
@@ -663,40 +704,77 @@ class controleur {
 		$form = '
 			<article >
 				<h3>' . $titreform . '</h3>
-				<form id="form_infirmier" method="post" >';
+				<form id="form_infirmier" method="post" role="form" class="formulaire-infirmier" >';
 		if ($type == 'Ajout' || $type == 'Demand') {
 			$vmp = $this->genererMDP ();
 			$form = $form . '
-					<div >
-					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/></br>
-					Mot de passe : <input type="text" readonly name="mp" id="mp" value="' . $vmp . '"></br>
-					</div>
+					
+					<fieldset class="form-group">
+						<label for="identifiant">Email (identifiant)</label>
+						<input type="email" class="form-control" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/>
+						
+						<label for="mp">Mot de passe</label>
+						<input type="text" class="form-control" readonly name="mp" id="mp" value="' . $vmp . '">
+					</fieldset >
 					
 			';
 		} else {
 			$form = $form . '
-			<div style="visibility: hidden;">
-					Identifiant : <input type="text" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/></br>
-					Mot de passe : <input type="text"  name="mp" id="mp" value=""></br>
+					<div id="to_hide">
+						<fieldset class="form-group">
+							<label for="identifiant">Email (identifiant)</label>
+							<input type="email" class="form-control" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/>
+							
+							<label for="mp">Mot de passe</label>
+							<input type="text" class="form-control" readonly name="mp" id="mp">
+						</fieldset >
 					</div>
-							';
+					';
 		}
-		$form = $form . ' 
-					<input type="text" name="nom" id="nom" placeholder="Nom infirmier" value="' . $nom . '" required/>
-					<input type="text" name="prenom" id="prenom" placeholder="Prenom infirmier" value="' . $prenom . '" required/></br>
-					<input type="date" name="date_naiss" id="date_naiss" placeholder="Date de naissance" value="' . $date_naiss . '" required/></br>
-					<input type="number" name="adresse1" id="adresse1" placeholder="Adresse" value="' . $adresse1 . '" required/>
-					<input type="text" name="adresse2" id="adresse2" placeholder="Complément Adresse" value="' . $adresse2 . '" /></br>
-					<input type="text" name="cp" id="cp" placeholder="Code Postal" value="' . $cp . '" required/>
-					<input type="text" name="ville" id="ville" placeholder="Ville" value="' . $ville . '" required/></br>
-					<input type="text" name="tel1" id="tel1" placeholder="Tel fixe" value="' . $tel1 . '" required/>
-					<input type="text" name="tel2" id="tel2" placeholder="Tel portable" value="' . $tel2 . '" />
-					<input type="text" name="tel3" id="tel3" placeholder="Tel travail" value="' . $tel3 . '" /></br>
+		$form = $form . '
+					<fieldset class="form-group">
+						<label for="nom">Nom</label>
+						<input type="text" class="form-control" name="nom" id="nom" value="' . $nom . '" required/>
+								
+						<label for"prenom">Prénom</label>
+						<input type="text" class="form-control" name="prenom" id="prenom" value="' . $prenom . '" required/>
+						
+						<label for"date_naiss">Date de naissance</label>
+						<input type="date" class="form-control" name="date_naiss" id="date_naiss" value="' . $date_naiss . '" required/>
+					</fieldset >
+								
+					<fieldset class="form-group">
+						<label for"adresse1">Numéro de voie</label>
+						<input type="number" class="form-control" name="adresse1" id="adresse1" value="' . $adresse1 . '" required/>
+								
+						<label for"adresse2">Nom de voie</label>
+						<input type="text" class="form-control" name="adresse2" id="adresse2" value="' . $adresse2 . '" required/>
+								
+						<label for"cp">Code postal</label>
+						<input type="text" class="form-control" name="cp" id="cp" value="' . $cp . '" required/>
+								
+						<label for"ville">Ville</label>
+						<input type="text" class="form-control" name="ville" id="ville" value="' . $ville . '" required/>
+					</fieldset >
+								
+					<fieldset class="form-group">
+						<label for"tel1">Tél. portable</label>
+						<input type="text" class="form-control" name="tel1" id="tel1" value="' . $tel1 . '" required/>
+								
+						<label for"tel2">Tél. fixe</label>
+						<input type="text" class="form-control" name="tel2" id="tel2" value="' . $tel2 . '" />
+								
+						<label for"tel3">Tél. autre</label>
+						<input type="text" class="form-control" name="tel3" id="tel3" value="' . $tel3 . '" />
+					</fieldset >
 					
-					<input id="submit" type="submit" name="send" class="button" value="' . $libelbutton . '" />
+					<input id="submit" type="submit" class="btn btn-default" value="' . $libelbutton . '">
 				</form>
 							
 				<script>
+							
+					$(\'#to_hide\').hide();
+							
 					function hd(){
 						$(\'#modal\').hide();
 						if($("#submit").prop("value")=="Supprimer"){
@@ -861,7 +939,11 @@ class controleur {
 			"adresse":
 			{
             	required: "Vous devez saisir une adresse valide"
-          	}
+          	},
+			"cp":
+			{
+				required: "Le code postal doit être composé de 5 chiffres"
+			}
 		},
 		errorPlacement: function (error, element) {
 			$(element).tooltipster("update", $(error).text());

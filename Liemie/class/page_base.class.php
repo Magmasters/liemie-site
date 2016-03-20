@@ -3,13 +3,14 @@ class page_base {
 	protected $right_sidebar;
 	protected $left_sidebar;
 	protected $titre;
+	protected $modal_login;
 	protected $js = array (
 			'jquery-2.1.4.min',
 			'bootstrap.min' 
 	);
 	protected $css = array (
-			'perso',
-			'bootstrap.min' 
+			'bootstrap.min',
+			'perso'
 	);
 	protected $page;
 	protected $metadescription = "Kaliémie";
@@ -24,17 +25,17 @@ class page_base {
 		switch ($propriete) {
 			case 'css' :
 				{
-					$this->css [count ( $this->css ) + 1] = $valeur;
+					if (!in_array($valeur, $this->css, true)) { array_push($this->css, $valeur); }
 					break;
 				}
 			case 'js' :
 				{
-					$this->js [count ( $this->js ) + 1] = $valeur;
+				if (!in_array($valeur, $this->js, true)) { array_push($this->js, $valeur); }
 					break;
 				}
 			case 'metakeyword' :
 				{
-					$this->metakeyword [count ( $this->metakeyword ) + 1] = $valeur;
+				if (!in_array($valeur, $this->metakeyword, true)) { array_push($this->metakeyword, $valeur); }
 					break;
 				}
 			case 'titre' :
@@ -57,9 +58,9 @@ class page_base {
 					$this->right_sidebar = $this->right_sidebar . $valeur;
 					break;
 				}
-			case 'loginbar' :
+			case 'modal_login' :
 				{
-					$this->loginbar = $this->loginbar . $valeur;
+					$this->modal_login = $this->modal_login . $valeur;
 					break;
 				}
 			case 'left_sidebar' :
@@ -143,10 +144,14 @@ class page_base {
 	}
 	protected function affiche_menu_connexion() {
 		if (! (isset ( $_SESSION ['email'] ) && isset ( $_SESSION ['type'] ))) {
-			echo '
+			
+			echo $this->modal_login.'
+					
 					<ul class="nav navbar-nav navbar-right">
-						<li><a  href="connect.php">Connexion</a></li>
-					</ul>';
+						<li><a href="" class="" data-toggle="modal" data-target="#modalConnexion">Connexion</a></li>
+					</ul>
+					
+					';
 		} else {
 			echo '
 					<ul class="nav navbar-nav navbar-right">

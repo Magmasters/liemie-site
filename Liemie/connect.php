@@ -1,4 +1,7 @@
 <?php
+/*
+ * Cette page n'est plus utilisée, connexion effectuée via une fenêtre modale
+ */
 include_once ('class/autoload.php');
 $site = new page_base ( 'Connect' );
 

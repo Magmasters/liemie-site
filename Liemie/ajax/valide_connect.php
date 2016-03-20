@@ -28,7 +28,7 @@ if (! empty ( $errors )) {
 	$data ['errors'] = $errors;
 } else {
 	if ($data ['success']) {
-		$data ['message'] = "Vous êtes bien connecté  !";
+		$data ['message'] = "Connexion réussie, vous serez redirigé dans quelques secondes !";
 	}
 }
 echo json_encode ( $data );
