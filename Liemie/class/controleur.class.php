@@ -715,7 +715,17 @@ class controleur {
 						
 						<label for="mp">Mot de passe</label>
 						<input type="text" class="form-control" readonly name="mp" id="mp" value="' . $vmp . '">
+								
+						<button onclick="copierMdp" id="boutonCopier" class="btn btn-default">Copier</button>
 					</fieldset >
+								
+					<script>
+						function copierMdp() {
+							alert("ok");
+							$("boutonCopier").text().select();
+							document.execCommand("copy");
+						}
+					</script>
 					
 			';
 		} else {
