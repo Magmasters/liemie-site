@@ -1,7 +1,7 @@
 <?php
 class controleur {
-	private $vpdo;
-	private $db;
+	protected $vpdo;
+	protected $db;
 	public function __construct() {
 		$this->vpdo = new mypdo ();
 		$this->db = $this->vpdo->connexion;
