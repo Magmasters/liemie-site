@@ -3,6 +3,11 @@ include_once ('autoload.php');
 
 class controleur_visite extends controleur {
 	
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
 	public function __get($propriete) {
 		switch ($propriete) {
 			case 'vpdo' :
@@ -21,8 +26,16 @@ class controleur_visite extends controleur {
 	
 	public function retourne_formulaire_visite($type, $idvisite = "") {
 		$form = '';
-		$nom = '';
-		$prenom = '';
+		$idinfirmier = '';
+		$idpatient = '';
+		
+		$libelle_soin = "";
+		$description_soin = "";
+		$date_visite = "";
+		
+		$sth_patients = $this->vpdo->liste_patient();
+		$sth_infirmiers = $this->vpdo->liste_infirmiers();
+		
 		
 		if ($type == 'Ajout') {
 			$titreform = "Formulaire d'ajout d'une visite";
@@ -70,12 +83,16 @@ class controleur_visite extends controleur {
 				<h3>' . $titreform . '</h3>
 				<form id="form_visite" method="post" role="form" class="formulaire-infirmier" >';
 		if ($type == 'Ajout' || $type == 'Demand') {
-			$vmp = $this->genererMDP ();
 			$form = $form . '
-					
 					<fieldset class="form-group">
-						<label for="identifiant">Email (identifiant)</label>
-						<input type="email" class="form-control" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/>
+						<label for="idinfirmier">Infirmier</label>
+						
+						<select name="select">
+							<option value="value1">  </option> 
+							<option value="value2" selected>Valeur 2</option>
+							<option value="value3">Valeur 3</option>
+						</select>
+						<input type="email" class="form-control" name="idinfirmier" id="idinfirmier" placeholder="Entrez un nom" value="' . $idinfirmier . '" required/>
 						
 						<label for="mp">Mot de passe</label>
 						<input type="text" class="form-control" readonly name="mp" id="mp" value="' . $vmp . '">

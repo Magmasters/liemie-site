@@ -4,7 +4,7 @@ class mypdo extends PDO {
 	private $PARAM_utilisateur = '119579'; // nom d'utilisateur pour se connecter
 	private $PARAM_mot_passe = 'magmasters'; // mot de passe de l'utilisateur pour se connecter
 	private $PARAM_nom_bd = 'magmasters_liemie';
-	private $connexion;
+	protected $connexion;
 	public function __construct()
 	{
 		try {

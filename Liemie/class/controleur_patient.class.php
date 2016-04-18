@@ -3,6 +3,11 @@ include_once('autoload.php');
 
 class controleur_patient extends controleur
 {
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
 	public function affiche_infos_patient()
 	{
 		$tab = array();
