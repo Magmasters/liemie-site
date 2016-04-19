@@ -8,22 +8,6 @@ class controleur_visite extends controleur {
 		parent::__construct();
 	}
 	
-	public function __get($propriete) {
-		switch ($propriete) {
-			case 'vpdo' :
-				{
-					return $this->vpdo;
-					break;
-				}
-			case 'db' :
-				{
-					
-					return $this->db;
-					break;
-				}
-		}
-	}
-	
 	public function retourne_formulaire_visite($type, $idvisite = "") {
 		$form = '';
 		$idinfirmier = '';
@@ -74,7 +58,7 @@ class controleur_visite extends controleur {
 				}
 			}
 			else {
-				$identifiant = "Non trouv鮮.";
+				$identifiant = "Non trouvé.";
 			}
 		}
 		
@@ -86,26 +70,11 @@ class controleur_visite extends controleur {
 			$form = $form . '
 					<fieldset class="form-group">
 						<label for="idinfirmier">Infirmier</label>
-						
-						<select name="select">
-							<option value="value1">  </option> 
-							<option value="value2" selected>Valeur 2</option>
-							<option value="value3">Valeur 3</option>
-						</select>
-						<input type="email" class="form-control" name="idinfirmier" id="idinfirmier" placeholder="Entrez un nom" value="' . $idinfirmier . '" required/>
-						
-						<label for="mp">Mot de passe</label>
-						<input type="text" class="form-control" readonly name="mp" id="mp" value="' . $vmp . '">
-								
-						<button onclick="copierMdp" id="boutonCopier" class="btn btn-default">Copier</button>
+						<select name="idinfirmier" id="idinfirmier" class="js-data-example-ajax"> </select>
 					</fieldset >
 								
 					<script>
-						function copierMdp() {
-							alert("ok");
-							$("boutonCopier").text().select();
-							document.execCommand("copy");
-						}
+						$(".js-data-example-ajax").select2();
 					</script>
 					
 			';
@@ -333,7 +302,7 @@ class controleur_visite extends controleur {
           	},
 			"cp":
 			{
-				required: "Le code postal doit 뵲e compos顤e 5 chiffres"
+				required: "Le code postal doit être composé 5 chiffres"
 			}
 		},
 		errorPlacement: function (error, element) {
