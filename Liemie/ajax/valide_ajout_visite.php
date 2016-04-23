@@ -1,0 +1,43 @@
+<?php
+session_start ();
+
+include_once ('../class/autoload.php');
+
+$data = array ();
+$data ['success'] = true;
+
+if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
+	
+	if (isset($_POST['idinfirmier']) && 
+			isset($_POST['idpatient']) &&
+			isset($_POST['date_visite']) &&
+			isset($_POST['heure_visite']))
+	{
+		
+		$mypdo = new mypdo();
+		
+		$idinfirmier = $_POST['idinfirmier'];
+		$idpatient = $_POST['idpatient'];
+		$jour_visite = $_POST['date_visite'];
+		$heure_visite = $_POST['heure_visite'];
+		
+		$date_visite = $jour_visite." ".$heure_visite;
+		
+		$tab = array();
+		$tab['idinfirmier'] = $idinfirmier;
+		$tab['idpatient'] = $idpatient;
+		$tab['date_visite'] = $date_visite;
+		
+		if($mypdo->ajouter_visite($tab)) {
+			$data ['success'] = true;
+		}
+	}
+	
+	if ($data['success']) {
+		$data ['message'][0] = "Une visite sera effectuée par l'infirmier $idinfirmier chez le patient $idpatient, le $jour_visite à $heure_visite";
+	} else {
+		$data ['errors'][0] = "Erreur, informations incomplètes, veuillez compléter tous les champs.";
+	}
+}
+
+echo json_encode ( $data );

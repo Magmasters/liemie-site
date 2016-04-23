@@ -342,14 +342,31 @@ class mypdo extends PDO {
 		}
 	}
 	
-	public function liste_infirmiers()
+	public function liste_infirmiers($champCritere='', $critere = '', $debut = 0, $fin = 0)
 	{
-		$statement = 'SELECT * FROM INFIRMIER';
+		$statement = '';
+		if ($champCritere != '') {
+			$statement = "SELECT * FROM INFIRMIER WHERE NOM LIKE :critere OR PRENOM LIKE :critere ORDER BY NOM, PRENOM LIMIT $debut, $fin";
+		}
+		else {
+			$statement = 'SELECT * FROM INFIRMIER';
+		}
+		
 		$sth = $this->connexion->prepare ( $statement );
+		if ($champCritere != '') {
+			//$sth->bindParam(':champ', $champCritere, PDO::PARAM_STR);
+			$critere = "%".$critere."%";
+			$sth->bindParam(':critere', $critere, PDO::PARAM_STR );
+		}
+		
 		if ($sth->execute () && $sth->rowCount () > 0) {
 			return $sth;
 		}
 		
+		//test
+		//echo 'error : ';
+		//echo $champCritere.' - '.$critere;
+		//var_dump($sth->errorInfo());
 		return false;
 	}
 	
@@ -659,7 +676,7 @@ class mypdo extends PDO {
 	}
 	
 	
-	public function liste_patient()
+	/*public function liste_patient()
 	{
 		$statement = 'SELECT * FROM PATIENT';
 		$sth = $this->connexion->prepare ( $statement );
@@ -667,6 +684,28 @@ class mypdo extends PDO {
 			return $sth;
 		}
 	
+		return false;
+	}*/
+	public function liste_patient($champCritere='', $critere = '', $debut = 0, $fin = 0)
+	{
+		$statement = '';
+		if ($champCritere != '') {
+			$statement = "SELECT * FROM PATIENT WHERE NOM LIKE :critere OR PRENOM LIKE :critere ORDER BY NOM, PRENOM LIMIT $debut, $fin";
+		}
+		else {
+			$statement = 'SELECT * FROM PATIENT';
+		}
+	
+		$sth = $this->connexion->prepare ( $statement );
+		if ($champCritere != '') {
+			//$sth->bindParam(':champ', $champCritere, PDO::PARAM_STR);
+			$critere = "%".$critere."%";
+			$sth->bindParam(':critere', $critere, PDO::PARAM_STR );
+		}
+		
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			return $sth;
+		}
 		return false;
 	}
 	
@@ -754,6 +793,37 @@ class mypdo extends PDO {
 		}
 	
 		return true;
+	}
+	
+	public function ajouter_visite($tab)
+	{
+		$statement = 'INSERT INTO VISITE (ID_INFIRMIER, ID_PATIENT, DATE_VISITE) VALUES(:idinfirmier, :idpatient, :date_visite)';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':idinfirmier', $tab['idinfirmier'], PDO::PARAM_INT);
+		$sth->bindParam(':idpatient', $tab['idpatient'], PDO::PARAM_INT);
+		$sth->bindParam(':date_visite', $tab['date_visite'], PDO::PARAM_STR);
+		
+		if ($sth->execute() && $sth->rowCount() > 0) {
+			return true;
+		} else {
+			//Erreur lors de l'exécution de la requête.
+			return false;
+		}
+	}
+	
+	public function liste_visites($date_debut, $date_fin)
+	{
+		$statement = 'SELECT * FROM VISITE WHERE date_visite >= :date_debut AND date_visite <= :date_fin';
+		$sth = $this->connexion->prepare ( $statement );
+		
+		$sth->bindParam(":date_debut", $date_debut, PDO::PARAM_STR);
+		$sth->bindParam(":date_fin", $date_fin, PDO::PARAM_STR);
+		
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			return $sth;
+		}
+	
+		return false;
 	}
 }
 ?>

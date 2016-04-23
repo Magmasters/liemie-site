@@ -8,17 +8,127 @@ class controleur_visite extends controleur {
 		parent::__construct();
 	}
 	
+	public function retourne_liste_visites() {
+		$retour = "";
+		
+		$retour .= "<div id='calendrier'></div>";
+		
+		$retour .= '
+			<script>
+				var json_visites;
+				function set_visites(visites){
+				    json_visites = visites;
+				}
+				function get_visites(){
+				    return json_visites;
+				}
+				
+				
+				var date = new Date();
+				var d = date.getDate();
+				var m = date.getMonth();
+				var y = date.getFullYear();
+				
+				$.ajax({
+					url: "ajax/recherche_visites.php",
+					dataType: "json",
+			        type: "POST",
+					async: false,
+			        data: "",
+			        success: function(data){
+			        	set_visites(data.visites);
+			        }
+				});
+				
+				console.log(get_visites());
+				
+			var calendar = $("#calendrier").fullCalendar(
+			{
+				/*
+					header option will define our calendar header.
+					left define what will be at left position in calendar
+					center define what will be at center position in calendar
+					right define what will be at right position in calendar
+				*/
+				header:
+				{
+					left: "prev,next today",
+					center: "title",
+					right: "month,agendaWeek,agendaDay"
+				},
+				/*
+					defaultView option used to define which view to show by default,
+					for example we have used agendaWeek.
+				*/
+				defaultView: "agendaWeek",
+				/*
+					selectable:true will enable user to select datetime slot
+					selectHelper will add helpers for selectable.
+				*/
+				selectable: true,
+				selectHelper: true,
+				/*
+					when user select timeslot this option code will execute.
+					It has three arguments. Start,end and allDay.
+					Start means starting time of event.
+					End means ending time of event.
+					allDay means if events is for entire day or not.
+				*/
+				select: function(start, end, allDay)
+				{
+					/*
+						after selection user will be promted for enter title for event.
+					*/
+					var title = prompt("Event Title:");
+					/*
+						if title is enterd calendar will add title and event into fullCalendar.
+					*/
+					if (title)
+					{
+						calendar.fullCalendar("renderEvent",
+							{
+								title: title,
+								start: start,
+								end: end,
+								allDay: allDay
+							},
+							true // make the event "stick"
+						);
+					}
+					calendar.fullCalendar("unselect");
+				},
+				/*
+					editable: true allow user to edit events.
+				*/
+				editable: true,
+				/*
+					events is the main option for calendar.
+					for demo we have added predefined events in json object.
+				*/
+				events: json_visites,
+			});
+			</script>
+		';
+		
+		return $retour;
+	}
+	
 	public function retourne_formulaire_visite($type, $idvisite = "") {
 		$form = '';
-		$idinfirmier = '';
+		$idinfirmier = -1;
 		$idpatient = '';
 		
 		$libelle_soin = "";
 		$description_soin = "";
 		$date_visite = "";
+		$heure_visite = "";
 		
-		$sth_patients = $this->vpdo->liste_patient();
-		$sth_infirmiers = $this->vpdo->liste_infirmiers();
+		/*
+		 * Peut poser des problèmes de mémoire si un nombre important
+		 * d'infirmiers & patients dans la base de données.
+		 */
+		//$sth_patients = $this->vpdo->liste_patient();
+		//$sth_infirmiers = $this->vpdo->liste_infirmiers();
 		
 		
 		if ($type == 'Ajout') {
@@ -39,93 +149,145 @@ class controleur_visite extends controleur {
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
 			$infirmier = $this->vpdo->trouve_infirmier ( $idinfirmier);
-			if ($infirmier != null) {
-				$identifiant = $infirmier->email;
-				$idadresse = $infirmier->id_adresse;
-				$nom = $infirmier->nom;
-				$prenom = $infirmier->prenom;
-				$adresse1 = $infirmier->adresse_num;
-				$adresse2 = $infirmier->adresse_rue;
-				$date_naiss = $infirmier->date_naiss;
-				$cp = $infirmier->adresse_cp;
-				$ville = $infirmier->adresse_ville;
-				$tel1 = $infirmier->tel1;
-				if (isset ( $infirmier->tel2 )) {
-					$tel2 = $infirmier->tel2;
-				}
-				if (isset ( $infirmier->tel3 )) {
-					$tel3 = $infirmier->tel3;
-				}
-			}
-			else {
-				$identifiant = "Non trouvé.";
-			}
 		}
 		
 		$form = '
 			<article >
 				<h3>' . $titreform . '</h3>
 				<form id="form_visite" method="post" role="form" class="formulaire-infirmier" >';
-		if ($type == 'Ajout' || $type == 'Demand') {
+		if ($type == 'Ajout') {
 			$form = $form . '
 					<fieldset class="form-group">
 						<label for="idinfirmier">Infirmier</label>
-						<select name="idinfirmier" id="idinfirmier" class="js-data-example-ajax"> </select>
+						<select name="idinfirmier" id="idinfirmier" class="form-control js-data-example-ajax"> 
+							<option>Saisissez un nom d\'infirmier</option>
+						</select>
 					</fieldset >
+					
+					<fieldset class="form-group">
+						<label for="idpatient">Patient</label>
+						<select name="idpatient" id="idpatient" class="form-control js-data-example-ajax"> 
+							<option>Saisissez un nom de patient</option>
+						</select>
+					</fieldset>
 								
 					<script>
-						$(".js-data-example-ajax").select2();
+						function formatRepo (infirmier) {
+						  if (infirmier.loading) return infirmier.text;
+
+						  var markup = "<div class=\'select2-result-repository clearfix\'>" +
+							"<div class=\'select2-result-repository__avatar\'><img src=\'" + infirmier.avatar_url + "\' /></div>" +
+							"<div class=\'select2-result-repository__meta\'>" +
+							  "<div class=\'select2-result-repository__title\'>" + infirmier.full_name + "</div>";
+
+						  markup += "</div></div>";
+
+						  return markup;
+						}
+
+						function formatRepoSelection (infirmier) {
+						  return infirmier.full_name || infirmier.text;
+						}
+					
+						$("#idinfirmier").select2({
+							  ajax: {
+								url: "ajax/recherche_patient_infirmier.php",
+								dataType: "json",
+								type: "POST",
+								delay: 500,
+								data: function (params) {
+								  return {
+									q: params.term, // search term
+									page: params.page,
+									type: "infirmier", //spécifier le type recherché ("infirmier" ou "patient")
+								  };
+								},
+								processResults: function (data, params) {
+								  // parse the results into the format expected by Select2
+								  // since we are using custom formatting functions we do not need to
+								  // alter the remote JSON data, except to indicate that infinite
+								  // scrolling can be used
+								  params.page = params.page || 0;
+
+								  return {
+									results: data.items,
+									pagination: {
+									  more: (params.page * 3) < data.total_count
+									}
+								  };
+								},
+								cache: true
+							  },
+							  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+							  minimumInputLength: 3,
+							  templateResult: formatRepo, // omitted for brevity, see the source of this page
+							  templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+						});
+					
+						$("#idinfirmier").on("select2:select", function(e) { 
+						    //console.log(e.params);
+							//console.log(e.params.data.id);
+							$idinfirmier = e.params.data.id;
+						});
+					
+					
+						$("#idpatient").select2({
+							  ajax: {
+								url: "ajax/recherche_patient_infirmier.php",
+								dataType: "json",
+								type: "POST",
+								delay: 500,
+								data: function (params) {
+								  return {
+									q: params.term, // search term
+									page: params.page,
+									type: "patient", //spécifier le type recherché ("infirmier" ou "patient")
+								  };
+								},
+								processResults: function (data, params) {
+								  // parse the results into the format expected by Select2
+								  // since we are using custom formatting functions we do not need to
+								  // alter the remote JSON data, except to indicate that infinite
+								  // scrolling can be used
+								  params.page = params.page || 0;
+
+								  return {
+									results: data.items,
+									pagination: {
+									  more: (params.page * 3) < data.total_count
+									}
+								  };
+								},
+								cache: true
+							  },
+							  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+							  minimumInputLength: 3,
+							  templateResult: formatRepo, // omitted for brevity, see the source of this page
+							  templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+						});
+					
+						$("#idpatient").on("select2:select", function(e) { 
+						    //console.log(e.params);
+							//console.log(e.params.data.id);
+							$idpatient = e.params.data.id;
+						});
 					</script>
 					
 			';
 		} else {
 			$form = $form . '
 					<div id="to_hide">
-						<fieldset class="form-group">
-							<label for="identifiant">Email (identifiant)</label>
-							<input type="email" class="form-control" name="identifiant" id="identifiant" placeholder="email infirmier" value="' . $identifiant . '" required/>
-							
-							<label for="mp">Mot de passe</label>
-							<input type="text" class="form-control" readonly name="mp" id="mp">
-						</fieldset >
+						
 					</div>
 					';
 		}
 		$form = $form . '
 					<fieldset class="form-group">
-						<label for="nom">Nom</label>
-						<input type="text" class="form-control" name="nom" id="nom" value="' . $nom . '" required/>
+						<label for"date_visite">Date de la visite</label>
+						<input type="date" class="form-control" name="date_visite" id="date_visite" value="' . $date_visite . '" required/>
 								
-						<label for"prenom">Pr꯯m</label>
-						<input type="text" class="form-control" name="prenom" id="prenom" value="' . $prenom . '" required/>
-						
-						<label for"date_naiss">Date de naissance</label>
-						<input type="date" class="form-control" name="date_naiss" id="date_naiss" value="' . $date_naiss . '" required/>
-					</fieldset >
-								
-					<fieldset class="form-group">
-						<label for"adresse1">Num곯 de voie</label>
-						<input type="number" class="form-control" name="adresse1" id="adresse1" value="' . $adresse1 . '" required/>
-								
-						<label for"adresse2">Nom de voie</label>
-						<input type="text" class="form-control" name="adresse2" id="adresse2" value="' . $adresse2 . '" required/>
-								
-						<label for"cp">Code postal</label>
-						<input type="text" class="form-control" name="cp" id="cp" value="' . $cp . '" required/>
-								
-						<label for"ville">Ville</label>
-						<input type="text" class="form-control" name="ville" id="ville" value="' . $ville . '" required/>
-					</fieldset >
-								
-					<fieldset class="form-group">
-						<label for"tel1">Tꬮ portable</label>
-						<input type="text" class="form-control" name="tel1" id="tel1" value="' . $tel1 . '" required/>
-								
-						<label for"tel2">Tꬮ fixe</label>
-						<input type="text" class="form-control" name="tel2" id="tel2" value="' . $tel2 . '" />
-								
-						<label for"tel3">Tꬮ autre</label>
-						<input type="text" class="form-control" name="tel3" id="tel3" value="' . $tel3 . '" />
+						<label for"heure_visite">Heure de la visite</label>
+						<input type="time" class="form-control" name="heure_visite" id="heure_visite" value="' . $heure_visite . '" required/>
 					</fieldset >
 					
 					<input id="submit" type="submit" class="btn btn-default" value="' . $libelbutton . '">
@@ -144,9 +306,9 @@ class controleur_visite extends controleur {
 				</script>
 							
 				<div  id="modal" >
-										<h1>Informations !</h1>
-										<div id="dialog1" ></div>
-										<a class="no" onclick="hd();">OK</a>
+					<h1>Informations !</h1>
+					<div id="dialog1" ></div>
+					<a class="no" onclick="hd();">OK</a>
 				</div>
 			<article >
 	<script>
@@ -172,20 +334,14 @@ class controleur_visite extends controleur {
 	$("#form_visite").submit(function( e ){
         e.preventDefault();
 		$("#modal").hide();
-							
-		$mdp = 0;
-		$idinfirmier = 0;
-		$idadresse = 0;
-	
-		var $url="ajax/valide_ajout_infirmier.php";
+		
+		var $url="ajax/valide_ajout_visite.php";
 		if($("#submit").prop("value")=="Modifier"){
-			$idinfirmier = '. json_encode($idinfirmier) .'
-			$idadresse = '. json_encode($idadresse) .'
+			//$idinfirmier = '. json_encode($idinfirmier) .'
 			$url="ajax/valide_modif_infirmier.php";
 		}
 		if($("#submit").prop("value")=="Supprimer"){
-			$idinfirmier = '. json_encode($idinfirmier) .'
-			$idadresse = '. json_encode($idadresse) .'
+			//$idinfirmier = '. json_encode($idinfirmier) .'
 			$url="ajax/valide_supp_infirmier.php";
 		}
 		if($("#submit").prop("value")=="Ajouter"){$mdp = $("#mp").val();}
@@ -194,31 +350,19 @@ class controleur_visite extends controleur {
 			/* Donn꦳ du post */
 							
 			var formData = {
-				"mp"					: $mdp,
-				"nom" 					: $("#nom").val().toUpperCase(),
-				"prenom"				: $("#prenom").val(),
-				"adresse1"				: $("#adresse1").val(),
-				"adresse2"				: $("#adresse2").val(),
-				"cp"					: $("#cp").val(),
-				"ville"					: $("#ville").val(),
-				"email"					: $("#identifiant").val(),
-				"tel1"					: $("#tel1").val(),
-				"tel2"					: $("#tel2").val(),
-				"tel3"					: $("#tel3").val(),
-				"date_naiss"			: $("#date_naiss").val(),
 				"idinfirmier"			: $idinfirmier,
-				"idadresse"				: $idadresse,
+				"idpatient"				: $idpatient,
+				"date_visite"			: $("#date_visite").val(),
+				"heure_visite"			: $("#heure_visite").val(),
 			};
 				
 			var filterDataRequest = $.ajax(
     		{
-	
         		type: "POST",
         		url: $url,
         		dataType: "json",
-				encode          : true,
+				encode  : true,
         		data: formData,
-	
 			});
 			filterDataRequest.done(function(data)
 			{
@@ -257,9 +401,9 @@ class controleur_visite extends controleur {
 					$("#dialog1").html($msg);$("#modal").show();
 	
 				});
+			
 			filterDataRequest.fail(function(jqXHR, textStatus)
 			{
-	
      			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
     			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
 				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
@@ -274,7 +418,6 @@ class controleur_visite extends controleur {
 	$("#form_visite").validate({
 		rules:
 		{
-							
 			"nom": {required: true},
 			"prenom": {required: true},
 			"adresse1": {required: true},

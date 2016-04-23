@@ -722,7 +722,7 @@ class controleur {
 					<script>
 						function copierMdp() {
 							alert("ok");
-							$("boutonCopier").text().select();
+							$("#boutonCopier").text().select();
 							document.execCommand("copy");
 						}
 					</script>

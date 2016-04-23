@@ -61,8 +61,9 @@ class page_base_securisee_admin extends page_base {
 			
 			<li class="dropdown dropdown-submenu"><a href="#">Gestion des visites</a>
 				<ul class="dropdown-menu">
+					<li><a href="liste_visites.php">Visualiser les visites</a></li>
 					<li><a href="ajout_visite.php">Ajouter une visite</a></li>
-					<li><a href="supp_visite.php">Supprimer un article</a></li>
+					<li><a href="supp_visite.php">Supprimer une visite</a></li>
 				</ul>
 			</li>
 		</ul>
