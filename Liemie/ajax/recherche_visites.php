@@ -12,14 +12,24 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	
 	$data['visites'] = array();
 	
-	$visites = $mypdo->liste_visites("2015-01-01", "2018-01-01");
+	$date_debut = $_POST["date_debut"];
+	$date_fin = $_POST["date_fin"];
+	
+	$visites = $mypdo->liste_visites($date_debut, $date_fin);
 	
 	if ($visites !== false) {
 		$data ['nombre'] = $visites->rowCount();
 		$tab_visite = array();
 		while($objVisite = $visites->fetchObject()) {
 			$tab_visite['id'] = $objVisite->ID_VISITE;
-			$tab_visite['title'] = "Visite";
+			
+			$infirmier = $mypdo->trouve_infirmier($objVisite->ID_INFIRMIER);
+			$patient = $mypdo->trouve_patient($objVisite->ID_PATIENT);
+			
+			$tab_visite['title'] = "Visite : ".$infirmier->nom." ".$infirmier->prenom;
+			$tab_visite['description'] = "Infirmier : ".$infirmier->nom." ".$infirmier->prenom;
+			$tab_visite['description'] .= " Patient : ".$patient->nom." ".$patient->prenom;
+			$tab_visite['description'] .= " Date : ".$objVisite->DATE_VISITE;
 			$tab_visite['start'] = $objVisite->DATE_VISITE;
 			$tab_visite['end'] = $objVisite->DATE_VISITE;
 			$tab_visite['allDay'] = false;

@@ -20,93 +20,109 @@ class controleur_visite extends controleur {
 				    json_visites = visites;
 				}
 				function get_visites(){
+					console.log("get_visites :");
+					console.log(json_visites);
 				    return json_visites;
 				}
 				
+				function recupererVisites(startDate = "", endDate = "") {
+					$.ajax({
+						url: "ajax/recherche_visites.php",
+						dataType: "json",
+				        type: "POST",
+						async: false,
+				        data: {
+							date_debut : startDate,
+							date_fin : endDate,
+						},
+				        success: function(data){
+				        	set_visites(data.visites);
+				        }
+					});
+				}
 				
-				var date = new Date();
-				var d = date.getDate();
-				var m = date.getMonth();
-				var y = date.getFullYear();
+				recupererVisites();
 				
-				$.ajax({
-					url: "ajax/recherche_visites.php",
-					dataType: "json",
-			        type: "POST",
-					async: false,
-			        data: "",
-			        success: function(data){
-			        	set_visites(data.visites);
-			        }
-				});
-				
-				console.log(get_visites());
-				
-			var calendar = $("#calendrier").fullCalendar(
-			{
-				/*
-					header option will define our calendar header.
-					left define what will be at left position in calendar
-					center define what will be at center position in calendar
-					right define what will be at right position in calendar
-				*/
-				header:
-				{
-					left: "prev,next today",
-					center: "title",
-					right: "month,agendaWeek,agendaDay"
-				},
-				/*
-					defaultView option used to define which view to show by default,
-					for example we have used agendaWeek.
-				*/
-				defaultView: "agendaWeek",
-				/*
-					selectable:true will enable user to select datetime slot
-					selectHelper will add helpers for selectable.
-				*/
-				selectable: true,
-				selectHelper: true,
-				/*
-					when user select timeslot this option code will execute.
-					It has three arguments. Start,end and allDay.
-					Start means starting time of event.
-					End means ending time of event.
-					allDay means if events is for entire day or not.
-				*/
-				select: function(start, end, allDay)
+				var calendrier = $("#calendrier").fullCalendar(
 				{
 					/*
-						after selection user will be promted for enter title for event.
+						header option will define our calendar header.
+						left define what will be at left position in calendar
+						center define what will be at center position in calendar
+						right define what will be at right position in calendar
 					*/
-					var title = prompt("Event Title:");
-					/*
-						if title is enterd calendar will add title and event into fullCalendar.
-					*/
-					if (title)
+					header:
 					{
-						calendar.fullCalendar("renderEvent",
-							{
-								title: title,
-								start: start,
-								end: end,
-								allDay: allDay
-							},
-							true // make the event "stick"
-						);
+						left: "prev,next today",
+						center: "title",
+						right: "month,agendaWeek,agendaDay"
+					},
+					/*
+						defaultView option used to define which view to show by default,
+						for example we have used agendaWeek.
+					*/
+					defaultView: "agendaWeek",
+					/*
+						selectable:true will enable user to select datetime slot
+						selectHelper will add helpers for selectable.
+					*/
+					selectable: false,
+					selectHelper: false,
+					/*
+						when user select timeslot this option code will execute.
+						It has three arguments. Start,end and allDay.
+						Start means starting time of event.
+						End means ending time of event.
+						allDay means if events is for entire day or not.
+					*/
+					select: function(start, end, allDay)
+					{
+						/*
+							after selection user will be promted for enter title for event.
+						*/
+						var title = prompt("Event Title:");
+						/*
+							if title is enterd calendar will add title and event into fullcalendrier.
+						*/
+						if (title)
+						{
+							calendrier.fullCalendar("renderEvent",
+								{
+									title: title,
+									start: start,
+									end: end,
+									allDay: allDay
+								},
+								true // make the event "stick"
+							);
+						}
+						calendrier.fullCalendar("unselect");
+					},
+					/*
+						editable: true allow user to edit events.
+					*/
+					editable: true,
+					/*
+						events is the main option for calendrier.
+						for demo we have added predefined events in json object.
+					*/
+				
+					//events: get_visites(),
+				
+					viewRender: function(view, element){
+					        var startDate = view.intervalStart.format("YYYY-MM-DD HH:MM:ss");
+							var endDate = view.intervalEnd.format("YYYY-MM-DD HH:MM:ss");
+							recupererVisites(startDate, endDate);
+							console.log("Du " + startDate + " au " + endDate);
+							$("#calendrier").fullCalendar("removeEvents");
+							$("#calendrier").fullCalendar("addEventSource", get_visites());
+							$("#calendrier").fullCalendar("refetchEvents");
+					},
+				
+					eventRender: function(event, element) {
+						 Tipped.create(element, event.description);
 					}
-					calendar.fullCalendar("unselect");
-				},
-				/*
-					editable: true allow user to edit events.
-				*/
-				editable: true,
-				/*
-					events is the main option for calendar.
-					for demo we have added predefined events in json object.
-				*/
-				events: json_visites,
-			});
+				});
 			</script>
 		';
 		

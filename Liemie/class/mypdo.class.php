@@ -711,8 +711,8 @@ class mypdo extends PDO {
 	
 	public function trouve_patient($idpatient)
 	{
-		$patient = new patient();
-		$statement = 'SELECT * FROM patient WHERE ID_INFIRMIER = :id';
+		$patient = new Patient();
+		$statement = 'SELECT * FROM PATIENT WHERE ID_PATIENT = :id';
 		$sth = $this->connexion->prepare ( $statement );
 		$sth->bindParam ( ':id', $idpatient, PDO::PARAM_INT );
 		if ($sth->execute () && $sth->rowCount () > 0) {

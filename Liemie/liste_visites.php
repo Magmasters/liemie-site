@@ -9,9 +9,11 @@ $site->js = 'jquery.tooltipster.min';
 $site->js = 'moment.min';
 $site->js = 'jquery-ui.min';
 $site->js = 'fullcalendar.min';
+$site->js = 'tipped.min';
 $site->css = 'tooltipster';
 $site->css = 'modal';
 $site->css = 'fullcalendar';
+$site->css = 'tipped';
 
 $controleur = new controleur_visite ();
 
