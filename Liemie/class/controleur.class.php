@@ -201,7 +201,7 @@ class controleur {
 				        		type: "POST", 
 				        		url: $url,
 				        		dataType: "json",
-								encode          : true,
+								encode  : true,
 				        		data: formData,	
 				
 							});
@@ -300,7 +300,7 @@ class controleur {
 	}
 	
 	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
-		
+	
 		if (!$this->vpdo->validite_jeton($idjeton, $user, $categ)) {
 			return '
 						<div class="alert alert-danger">
@@ -309,27 +309,27 @@ class controleur {
 						<button type="button" class="btn btn-secondary"><a href="index.php"><img src="./image/exit.png" width="16" height="16"> Retour accueil </a></button>
 					';
 		}
-		
+	
 		return '
-		
+	
 			<div class="well">
-				<form name="login" id="login" method="post">
+				<form name="login_oubli" id="login_oubli" method="post">
 					<div>
-						<label for="mdp">Nouveau mot de passe</label>
-						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp" name="mdp" value="">
+						<label for="mdp_resti">Nouveau mot de passe</label>
+						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp_resti" name="mdp_resti" value="">
 					</div>
 					<div>
-						<label for="mdp2">Confirmation mot de passe</label>
-						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp2" name="mdp2" value="">
+						<label for="mdp_resti_confirm">Confirmation mot de passe</label>
+						<input autocomplete="on" type="password" class="form-control input-lg" id="mdp_resti_confirm" name="mdp_resti_confirm" value="">
 					</div>
 					<div id="checkerror">
 					<br>
 					</div>
-		
+	
 					<input name="send" class="btn btn-lg btn-success" type="submit" value="Envoyer">
 				</form>
 			</div>
-		
+	
 			<script>function hd(){ $(\'#modal\').hide();}</script>
 			<script>function home(){ document.location.href="index.php";}</script>
 			<div  id="modal" >
@@ -340,7 +340,7 @@ class controleur {
 	<script>
 	$("#modal").hide();
 	//Initialize the tooltips
-	$("#login :input").tooltipster({
+	$("#login_oubli :input").tooltipster({
 				         trigger: "custom",
 				         onlyOne: false,
 				         position: "bottom",
@@ -356,35 +356,35 @@ class controleur {
 			          return this.optional(element) || regexp.test(value);
 			   },"erreur champs non valide"
 			);
-	$("#login").submit(function( e ){
+	$("#login_oubli").submit(function( e ){
         e.preventDefault();
 		$("#modal").hide();
-		
+	
 		var $url="ajax/valide_reinit_mdp.php";
-				
+	
 		$idjeton = '. json_encode($idjeton) .'
 		$user = '. json_encode($user) .'
 		$categ = '. json_encode($categ) .'
-				
-		if($("#login").valid())
+	
+		if($("#login_oubli").valid())
 		{
 			var formData = {
-				"mdp" 					: $("#mdp").val(),
-				"mdp2" 					: $("#mdp2").val(),
+				"mdp" 					: $("#mdp_resti").val(),
+				"mdp2" 					: $("#mdp_resti_confirm").val(),
 	   			"categ"					: $categ,
 				"idjeton" 				: $idjeton,
 				"user"					: $user,
 			};
-		
+	
 			var filterDataRequest = $.ajax(
     		{
-		
+	
         		type: "POST",
         		url: $url,
         		dataType: "json",
 				encode	: true,
         		data	: formData,
-		
+	
 			});
 			filterDataRequest.done(function(data)
 			{
@@ -403,7 +403,7 @@ class controleur {
 							$msg+=$x;
 							$msg+="</li>";
 							}
-		
+	
 						$msg+="</ul>";
 				}
 				else
@@ -411,13 +411,13 @@ class controleur {
 						$msg="";
 						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
 				}
-		
+	
 					$("#dialog1").html($msg);$("#modal").show();
-		
+	
 				});
 			filterDataRequest.fail(function(jqXHR, textStatus)
 			{
-		
+	
      			if (jqXHR.status === 0){alert("Not connect.n Verify Network.");}
     			else if (jqXHR.status == 404){alert("Requested page not found. [404]");}
 				else if (jqXHR.status == 500){alert("Internal Server Error [500].");}
@@ -428,21 +428,21 @@ class controleur {
 			});
 		}
 	});
-		
-	$("#login").validate({
+	
+	$("#login_oubli").validate({
 		rules:
 		{
-				
-			"mdp": {required: true},
-			"mdp2": {required: true}
+	
+			"mdp_resti": {required: true},
+			"mdp_resti_confirm": {required: true}
 		},
 		messages:
 		{
-        	"mdp":
+        	"mdp_resti":
           	{
             	required: "Les mot de passes doivent être identiques !"
           	},
-			"mdp2":
+			"mdp_resti_confirm":
 			{
             	required: "Les mot de passes doivent être identiques !"
           	}
@@ -457,7 +457,7 @@ class controleur {
 		}
    	});
 	</script>
-		
+	
 		';
 	}
 	
@@ -465,21 +465,21 @@ class controleur {
 		return '
 	
 			<div class="well">
-				<form name="login" id="login" method="post">
+				<form name="resitution_mdp" id="resitution_mdp" method="post">
 					<div>
-						<label for="email">Identifiant (email)</label>
-						<input autocomplete="on" type="text" class="form-control input-lg" id="email" name="email" value="">
+						<label for="email_oubli">Identifiant (email)</label>
+						<input autocomplete="on" type="text" class="form-control input-lg" id="email_oubli" name="email_oubli" value="">
 					</div>
 					<div class="list-group-item">
-						<label for="rblogin">Type de compte</label>
-						<input type="radio" name="rblogin" id="rbp"  value="rbp" required/>Patient
-						<input type="radio" name="rblogin" id="rbi"  value="rbi" required/>Infirmier
-						<input type="radio" name="rblogin" id="rba" value="rba" required/>Administrateur
+						<label for="rblogin_oubli">Type de compte</label>
+						<input type="radio" name="rblogin_oubli" id="rbp"  value="rbp" required/>Patient
+						<input type="radio" name="rblogin_oubli" id="rbi"  value="rbi" required/>Infirmier
+						<input type="radio" name="rblogin_oubli" id="rba" value="rba" required/>Administrateur
 					</div>
 					<div id="checkerror">
 					<br>
 					</div>
-				
+	
 					<input name="send" class="btn btn-lg btn-success" type="submit" value="Envoyer">
 				</form>
 			</div>
@@ -494,7 +494,7 @@ class controleur {
 	<script>
 	$("#modal").hide();
 	//Initialize the tooltips
-	$("#login :input").tooltipster({
+	$("#resitution_mdp :input").tooltipster({
 				         trigger: "custom",
 				         onlyOne: false,
 				         position: "bottom",
@@ -510,22 +510,22 @@ class controleur {
 			          return this.optional(element) || regexp.test(value);
 			   },"erreur champs non valide"
 			);
-	$("#login").submit(function( e ){
+	$("#resitution_mdp").submit(function( e ){
         e.preventDefault();
 		$("#modal").hide();
 	
 		var $url="ajax/valide_restitution_mdp.php";
-		if($("#login").valid())
+		if($("#resitution_mdp").valid())
 		{
 			$categ="infirmier";
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbp"){$categ="patient";}
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rbi"){$categ="infirmier";}
-			if($("input[type=radio][name=rblogin]:checked").attr("value")=="rba"){$categ="admin";}
+			if($("input[type=radio][name=rblogin_oubli]:checked").attr("value")=="rbp"){$categ="patient";}
+			if($("input[type=radio][name=rblogin_oubli]:checked").attr("value")=="rbi"){$categ="infirmier";}
+			if($("input[type=radio][name=rblogin_oubli]:checked").attr("value")=="rba"){$categ="admin";}
 			var formData = {
-			"email" 				: $("#email").val().toUpperCase(),
+			"email" 				: $("#email_oubli").val().toUpperCase(),
    			"categ"					: $categ,
 			};
-				
+	
 			var filterDataRequest = $.ajax(
     		{
 	
@@ -578,21 +578,21 @@ class controleur {
 			});
 		}
 	});
-  
-	$("#login").validate({
+	
+	$("#resitution_mdp").validate({
 		rules:
 		{
-							
-			"email": {required: true},
-			"rblogin": {required: true}
+				
+			"email_oubli": {required: true},
+			"rblogin_oubli": {required: true}
 		},
 		messages:
 		{
-        	"email":
+        	"email_oubli":
           	{
             	required: "Vous devez saisir un identifiant valide"
           	},
-			"rblogin":
+			"rblogin_oubli":
 			{
             	required: "Vous devez choisir un type de compte"
           	}

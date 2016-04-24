@@ -4,7 +4,9 @@ session_start ();
 include_once ('../class/autoload.php');
 
 $data = array ();
-$data ['success'] = true;
+$data ['errors'] = array();
+$errors = array();
+$data ['success'] = false;
 
 if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	
@@ -23,20 +25,29 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 		
 		$date_visite = $jour_visite." ".$heure_visite;
 		
-		$tab = array();
-		$tab['idinfirmier'] = $idinfirmier;
-		$tab['idpatient'] = $idpatient;
-		$tab['date_visite'] = $date_visite;
 		
-		if($mypdo->ajouter_visite($tab)) {
-			$data ['success'] = true;
+		$datetime_timestamp  = strtotime($date_visite);
+		$now = time();
+		//Une visite doit être programmée plus de 48 heures avant la date de visite prévue
+		if ($datetime_timestamp <= ($now+3600*48))
+		{
+			array_push($errors, "Une visite doit être programmée au moins 48 heures avant la date de visite prévue");
+		} else {
+			$tab = array();
+			$tab['idinfirmier'] = $idinfirmier;
+			$tab['idpatient'] = $idpatient;
+			$tab['date_visite'] = $date_visite;
+			
+			if($mypdo->ajouter_visite($tab)) {
+				$data ['success'] = true;
+			}
 		}
 	}
 	
 	if ($data['success']) {
 		$data ['message'][0] = "Une visite sera effectuée par l'infirmier $idinfirmier chez le patient $idpatient, le $jour_visite à $heure_visite";
 	} else {
-		$data ['errors'][0] = "Erreur, informations incomplètes, veuillez compléter tous les champs.";
+		$data['errors'] = $errors;
 	}
 }
 

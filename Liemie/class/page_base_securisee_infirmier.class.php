@@ -23,7 +23,7 @@ class page_base_securisee_infirmier extends page_base {
 		aria-expanded="false">Administration<span class="caret"></span></a>
 		<ul class="dropdown-menu">
 			<li><a href="">Modifier mes informations</a></li>
-			<li><a href="">Mon planning</a></li>
+			<li><a href="liste_visites.php">Mon planning</a></li>
 			<li><a href="">Indisponibilités</a></li>
 			<li><a href="">Mes spécialités</a></li>
 		</ul></li>

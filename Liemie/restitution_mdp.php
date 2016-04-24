@@ -26,11 +26,6 @@ if (isset ( $_SESSION ['email'] ) && isset ( $_SESSION ['type'] )) {
 	 * le formulaire de connexion modal
 	 */
 	
-	$site->js = 'jquery.validate.min';
-	$site->js = 'messages_fr';
-	$site->js = 'jquery.tooltipster.min';
-	$site->css = 'tooltipster';
-	
 	$site->modal_login = $controleur->retourne_formulaire_login();
 }
 

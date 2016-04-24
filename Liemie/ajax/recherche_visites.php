@@ -6,7 +6,7 @@ include_once ('../class/autoload.php');
 $data = array ();
 $data ['nombre'] = 0;
 
-if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
+if (isset($_SESSION ['type']) && ($_SESSION ['type'] === "admin" || $_SESSION['type'] === "infirmier")) {
 	
 	$mypdo = new mypdo();
 	
@@ -15,7 +15,15 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	$date_debut = $_POST["date_debut"];
 	$date_fin = $_POST["date_fin"];
 	
-	$visites = $mypdo->liste_visites($date_debut, $date_fin);
+	if ($_SESSION['type'] === "infirmier") {
+		/*
+		 * Pour un (utilisateur connecté) INFIRMIER on ne liste que
+		 * les visites dont ID_INFIRMIER est égal à l'ID_INFIRMIER (identifiant stocké dans un cookie de session)
+		 */
+		$visites = $mypdo->liste_visites($date_debut, $date_fin, $_SESSION ['id_utilisateur']);
+	} else {
+		$visites = $mypdo->liste_visites($date_debut, $date_fin);
+	}
 	
 	if ($visites !== false) {
 		$data ['nombre'] = $visites->rowCount();

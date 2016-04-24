@@ -4,6 +4,7 @@ session_start ();
 include_once ('../class/autoload.php');
 
 $errors = array ();
+$errors ['message'] = array();
 $data = array ();
 $data ['success'] = false;
 
@@ -16,20 +17,26 @@ $tab ['mdp'] = $_POST ['mdp'];
 $tab ['mdp2'] = $_POST ['mdp2'];
 $tab ['categ'] = $_POST ['categ'];
 
-$resultat = $mypdo->reinit_mdp ( $tab );
-if (isset ( $resultat ) && $resultat == true) {
-	$data ['success'] = true;
-} else {
-	$errors ['message'] = 'Erreur, veuillez réessayer ! ';
+if (strlen($tab['mdp']) < 8) {
+	array_push($errors ['message'], "Le mot de passe doit comporter au moins 8 caractères.");	
 }
 
-if (! empty ( $errors )) {
+if (strcmp($tab['mdp'], $tab['mdp2']) != 0)
+{
+	array_push($errors ['message'], "Les mots de passe saisis doivent être identiques ! ");
+}
+
+if (empty ( $errors['message'] ) && !$mypdo->reinit_mdp ( $tab )) {
+	array_push($errors ['message'], "Erreur lors de la réinitialisation.");
+}
+
+
+if (! empty ( $errors['message'] )) {
 	$data ['success'] = false;
 	$data ['errors'] = $errors;
 } else {
-	if ($data ['success']) {
-		$data ['message'] = "Votre mot de passe a été réinitialisé !";
-	}
+	$data ['success'] = true;
+	$data ['message'] = "Votre mot de passe a été réinitialisé !";
 }
 echo json_encode ( $data );
 ?>

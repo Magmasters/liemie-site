@@ -7,7 +7,7 @@ class page_base_securisee_admin extends page_base {
 		if (! isset ( $_SESSION ['email'] ) || ! isset ( $_SESSION ['type'] )) {
 			echo '<script>document.location.href="index.php"; </script>';
 		} else {
-			if ($_SESSION ['type'] != 'admin') {
+			if ($_SESSION ['type'] !== "admin") {
 				echo '<script>document.location.href="index.php"; </script>';
 			} else {
 				parent::affiche ();

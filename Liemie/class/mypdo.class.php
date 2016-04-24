@@ -41,7 +41,7 @@ class mypdo extends PDO {
 			$requete = 'select * from PATIENT where EMAIL="' . $tab ['email'] . '" and MDP="' . $tab ['mdp'] . '";';
 		}
 		$result = $this->connexion->query ( $requete );
-		if ($result) {
+		if ($result !== false) {
 			if ($result->rowCount () == 1) {
 				return ($result);
 			}
@@ -58,15 +58,6 @@ class mypdo extends PDO {
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':idjeton', $tab['idjeton'], PDO::PARAM_INT);
 		$sth->bindParam(':lien', $hash_jeton, PDO::PARAM_STR);
-		
-		if (!$sth->execute() || $sth->rowCount() <= 0) {
-			//echo "jeton incorrect ! ".$hash_jeton . ' - '.$tab['idjeton'];
-			return false;
-		}
-		
-		$statement = 'DELETE FROM JETON WHERE ID_JETON=:idjeton';
-		$sth = $this->connexion->prepare($statement);
-		$sth->bindParam(':idjeton', $tab['idjeton'], PDO::PARAM_INT);
 		
 		if (!$sth->execute() || $sth->rowCount() <= 0) {
 			//echo "jeton incorrect ! ".$hash_jeton . ' - '.$tab['idjeton'];
@@ -92,6 +83,15 @@ class mypdo extends PDO {
 		
 		if (!$sth->execute() || $sth->rowCount() <= 0) {
 			//echo "mdp : ". $tab['mdp'].' hash : '. $hash_mdp;
+			return false;
+		}
+		
+		$statement = 'DELETE FROM JETON WHERE ID_JETON=:idjeton';
+		$sth = $this->connexion->prepare($statement);
+		$sth->bindParam(':idjeton', $tab['idjeton'], PDO::PARAM_INT);
+		
+		if (!$sth->execute() || $sth->rowCount() <= 0) {
+			//echo "jeton incorrect ! ".$hash_jeton . ' - '.$tab['idjeton'];
 			return false;
 		}
 		
@@ -811,13 +811,20 @@ class mypdo extends PDO {
 		}
 	}
 	
-	public function liste_visites($date_debut, $date_fin)
+	public function liste_visites($date_debut, $date_fin, $id_infirmier = -1)
 	{
 		$statement = 'SELECT * FROM VISITE WHERE date_visite >= :date_debut AND date_visite <= :date_fin';
+		if ($id_infirmier != -1) {
+			$statement .= ' AND ID_INFIRMIER = :id_infirmier';
+		}
+		
 		$sth = $this->connexion->prepare ( $statement );
 		
 		$sth->bindParam(":date_debut", $date_debut, PDO::PARAM_STR);
 		$sth->bindParam(":date_fin", $date_fin, PDO::PARAM_STR);
+		if ($id_infirmier != -1) {
+			$sth->bindParam(":id_infirmier", $id_infirmier, PDO::PARAM_INT);
+		}
 		
 		if ($sth->execute () && $sth->rowCount () > 0) {
 			return $sth;

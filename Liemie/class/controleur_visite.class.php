@@ -9,7 +9,51 @@ class controleur_visite extends controleur {
 	}
 	
 	public function retourne_liste_visites() {
+		
+		$formulaire_ajout = "";
+		$droit_ajout = false;
+		if ($_SESSION['type'] === "admin")
+		{
+			$formulaire_ajout = $this->retourne_formulaire_visite("Ajout");
+			$droit_ajout = true;
+		}
+		
 		$retour = "";
+		
+		$retour .= '
+					<!-- Modal visite -->
+					<div class="modal fade" id="modalVisite" role="dialog" 
+					     aria-labelledby="myModalLabel" aria-hidden="true">
+					    <div class="modal-dialog">
+					        <div class="modal-content">
+					            <!-- Modal Header -->
+					            <div class="modal-header">
+					                <button type="button" class="close" 
+					                   data-dismiss="modal">
+					                       <span aria-hidden="true">&times;</span>
+					                       <span class="sr-only">Close</span>
+					                </button>
+					                <h4 class="modal-title" id="myModalLabel">
+					                    Ajouter une visite
+					                </h4>
+					            </div>
+					            
+					            <!-- Modal Body -->
+					            <div class="modal-body">
+					                
+								'.$formulaire_ajout.'
+					                
+					                
+					            </div>
+					            
+					            <!-- Modal Footer -->
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+		';
 		
 		$retour .= "<div id='calendrier'></div>";
 		
@@ -66,8 +110,8 @@ class controleur_visite extends controleur {
 						selectable:true will enable user to select datetime slot
 						selectHelper will add helpers for selectable.
 					*/
-					selectable: false,
-					selectHelper: false,
+					selectable: '.json_encode($droit_ajout).',
+					selectHelper: '.json_encode($droit_ajout).',
 					/*
 						when user select timeslot this option code will execute.
 						It has three arguments. Start,end and allDay.
@@ -80,10 +124,13 @@ class controleur_visite extends controleur {
 						/*
 							after selection user will be promted for enter title for event.
 						*/
-						var title = prompt("Event Title:");
+						$("#modalVisite").modal("show");
+						$("#date_visite").val(start.format("YYYY-MM-DD"));
+						$("#heure_visite").val(end.format("HH:MM"));
 						/*
 							if title is enterd calendar will add title and event into fullcalendrier.
 						*/
+						var title ="Nouvelle visite";
 						if (title)
 						{
 							calendrier.fullCalendar("renderEvent",
@@ -91,7 +138,7 @@ class controleur_visite extends controleur {
 									title: title,
 									start: start,
 									end: end,
-									allDay: allDay
+									allDay: false
 								},
 								true // make the event "stick"
 							);
@@ -132,7 +179,7 @@ class controleur_visite extends controleur {
 	public function retourne_formulaire_visite($type, $idvisite = "") {
 		$form = '';
 		$idinfirmier = -1;
-		$idpatient = '';
+		$idpatient = -1;
 		
 		$libelle_soin = "";
 		$description_soin = "";
@@ -168,21 +215,20 @@ class controleur_visite extends controleur {
 		}
 		
 		$form = '
-			<article >
 				<h3>' . $titreform . '</h3>
 				<form id="form_visite" method="post" role="form" class="formulaire-infirmier" >';
 		if ($type == 'Ajout') {
 			$form = $form . '
 					<fieldset class="form-group">
 						<label for="idinfirmier">Infirmier</label>
-						<select name="idinfirmier" id="idinfirmier" class="form-control js-data-example-ajax"> 
+						<select name="idinfirmier" id="idinfirmier" class="js-data-example-ajax"> 
 							<option>Saisissez un nom d\'infirmier</option>
 						</select>
 					</fieldset >
 					
 					<fieldset class="form-group">
 						<label for="idpatient">Patient</label>
-						<select name="idpatient" id="idpatient" class="form-control js-data-example-ajax"> 
+						<select name="idpatient" id="idpatient" class="js-data-example-ajax"> 
 							<option>Saisissez un nom de patient</option>
 						</select>
 					</fieldset>
@@ -326,7 +372,6 @@ class controleur_visite extends controleur {
 					<div id="dialog1" ></div>
 					<a class="no" onclick="hd();">OK</a>
 				</div>
-			<article >
 	<script>
 							
 	$("#modal").hide();
@@ -385,8 +430,8 @@ class controleur_visite extends controleur {
 				if ( ! data.success)
 				{
 						$msg="<ul>";
-						if (data.errors.message) {
-							$.each(data.errors.message, function(index, value) {
+						if (data.errors) {
+							$.each(data.errors, function(index, value) {
 								$msg+="<li>";
 								$msg+=value;
 								$msg+="</li>";
