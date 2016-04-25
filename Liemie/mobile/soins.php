@@ -4,7 +4,7 @@ include_once ('../class/autoload.php');
 
 $mypdo = new mypdo ();
 
-$table = $_GET ['table'];
+$table = $_POST ['table'];
 
 switch ($table) {
 	case 'categorie' :

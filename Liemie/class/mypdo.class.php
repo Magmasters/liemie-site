@@ -159,13 +159,13 @@ class mypdo extends PDO {
 		$sth->bindParam ( ':mdp', $tab ['mdp'], PDO::PARAM_STR, 64 );
 		if ($sth->execute () && $sth->rowCount () > 0) {
 			$infirmier = $sth->fetchObject ();
-			$tab_infirmier [id] = $infirmier->ID_INFIRMIER;
-			$tab_infirmier [nom] = $infirmier->NOM;
-			$tab_infirmier [prenom] = $infirmier->PRENOM;
-			$tab_infirmier [date_naissance] = $infirmier->DATE_NAISSANCE;
-			$tab_infirmier [email] = $infirmier->EMAIL;
-			$tab_infirmier [mdp] = $infirmier->MDP;
-			$tab_infirmier [lien_photo] = $infirmier->LIEN_PHOTO;
+			$tab_infirmier ['id'] = $infirmier->ID_INFIRMIER;
+			$tab_infirmier ['nom'] = $infirmier->NOM;
+			$tab_infirmier ['prenom'] = $infirmier->PRENOM;
+			$tab_infirmier ['date_naissance'] = $infirmier->DATE_NAISSANCE;
+			$tab_infirmier ['email'] = $infirmier->EMAIL;
+			$tab_infirmier ['mdp'] = $infirmier->MDP;
+			$tab_infirmier ['lien_photo'] = $infirmier->LIEN_PHOTO;
 			
 			$sth->closeCursor ();
 		}

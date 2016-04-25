@@ -12,7 +12,7 @@ $tab ['email'] = $_POST ['email'];
 $tab ['mdp'] =  $_POST ['mdp'];
 
 $tab_infirmier = $mypdo->connect_mobile ( $tab );
-echo $tab_infirmier;
+echo json_encode($tab_infirmier);
 
 /*echo $tab['email'];
 echo '<br>';
