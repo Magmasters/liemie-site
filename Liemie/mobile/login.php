@@ -5,10 +5,11 @@ $mypdo = new mypdo ();
 
 $tab = array ();
 $tab ['email'] = "";
-$tab ['mdp'] = md5 ( "" );
+$tab ['mdp'] = "";
 
 $tab ['email'] = $_POST ['email'];
-$tab ['mdp'] = md5 ( $_POST ['mdp'] );
+//$tab ['mdp'] = md5 ( $_POST ['mdp'] );
+$tab ['mdp'] =  $_POST ['mdp'];
 
 $tab_infirmier = $mypdo->connect_mobile ( $tab );
 echo $tab_infirmier;
