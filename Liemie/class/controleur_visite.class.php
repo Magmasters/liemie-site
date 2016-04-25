@@ -85,6 +85,7 @@ class controleur_visite extends controleur {
 					});
 				}
 				
+				
 				recupererVisites();
 				
 				var calendrier = $("#calendrier").fullCalendar(
@@ -119,7 +120,7 @@ class controleur_visite extends controleur {
 						End means ending time of event.
 						allDay means if events is for entire day or not.
 					*/
-					select: function(start, end, allDay)
+					select: function(start, end, allDay) 
 					{
 						/*
 							after selection user will be promted for enter title for event.
@@ -145,6 +146,12 @@ class controleur_visite extends controleur {
 						}
 						calendrier.fullCalendar("unselect");
 					},
+					 eventClick: function(event) {
+        					if (event.id) {
+            				window.open(event.url);
+            				return false;
+        				}
+   					 }
 					/*
 						editable: true allow user to edit events.
 					*/
