@@ -55,7 +55,7 @@ class controleur_patient extends controleur
         		</tr>
     		</thead>
     		<tbody >';
-		$result = $this->vpdo->liste_patients ();
+		$result = $this->vpdo->liste_patient ();
 		if ($result != false) {
 			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
 			// parcourir chaque ligne sélectionnée

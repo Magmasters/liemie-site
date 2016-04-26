@@ -21,6 +21,12 @@ class controleur_visite extends controleur {
 		$retour = "";
 		
 		$retour .= '
+					<script>
+						function verifCreationVisite()
+						{
+							recupererVisites();
+						}
+					</script>
 					<!-- Modal visite -->
 					<div class="modal fade" id="modalVisite" role="dialog" 
 					     aria-labelledby="myModalLabel" aria-hidden="true">
@@ -48,7 +54,7 @@ class controleur_visite extends controleur {
 					            
 					            <!-- Modal Footer -->
 					            <div class="modal-footer">
-					                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="verifCreationVisite()">Fermer</button>
 					            </div>
 					        </div>
 					    </div>
@@ -59,6 +65,9 @@ class controleur_visite extends controleur {
 		
 		$retour .= '
 			<script>
+				//Objet "view" du calendrier affiché (permet d\"accéder aux proprioétés dates)
+				var current_view;
+				
 				var json_visites;
 				function set_visites(visites){
 				    json_visites = visites;
@@ -69,7 +78,16 @@ class controleur_visite extends controleur {
 				    return json_visites;
 				}
 				
-				function recupererVisites(startDate = "", endDate = "") {
+				/*
+				* Récupère les visites depuis la base de donnée
+				* (entre les dates "startDate" et "endDate")
+				* et les affiche sur le calendrier.
+				*/
+				function recupererVisites() {
+				
+					var startDate = current_view.intervalStart.format("YYYY-MM-DD HH:MM:ss");
+					var endDate = current_view.intervalEnd.format("YYYY-MM-DD HH:MM:ss");
+				
 					$.ajax({
 						url: "ajax/recherche_visites.php",
 						dataType: "json",
@@ -83,10 +101,11 @@ class controleur_visite extends controleur {
 				        	set_visites(data.visites);
 				        }
 					});
+				
+					$("#calendrier").fullCalendar("removeEvents");
+					$("#calendrier").fullCalendar("addEventSource", get_visites());
+					$("#calendrier").fullCalendar("refetchEvents");
 				}
-				
-				
-				recupererVisites();
 				
 				var calendrier = $("#calendrier").fullCalendar(
 				{
@@ -128,9 +147,6 @@ class controleur_visite extends controleur {
 						$("#modalVisite").modal("show");
 						$("#date_visite").val(start.format("YYYY-MM-DD"));
 						$("#heure_visite").val(end.format("HH:MM"));
-						/*
-							if title is enterd calendar will add title and event into fullcalendrier.
-						*/
 						var title ="Nouvelle visite";
 						if (title)
 						{
@@ -147,11 +163,25 @@ class controleur_visite extends controleur {
 						calendrier.fullCalendar("unselect");
 					},
 					 eventClick: function(event) {
-        					if (event.id) {
-            				window.open(event.url);
-            				return false;
+        				if (event.id) {
+							$.ajax({
+								url: "ajax/recherche_visites.php",
+								dataType: "json",
+						        type: "POST",
+								async: false,
+						        data: {
+									id_visite : event.id,
+								},
+						        success: function(data){
+									//data.visite : tableau json avec les données de la visite retournée
+									$("#date_visite").val(data.);
+									$("#heure_visite").val(data.);
+							
+						        }
+							});
+							$("#modalVisite").modal("show");
         				}
-   					 }
+   					 },
 					/*
 						editable: true allow user to edit events.
 					*/
@@ -164,13 +194,8 @@ class controleur_visite extends controleur {
 					//events: get_visites(),
 				
 					viewRender: function(view, element){
-					        var startDate = view.intervalStart.format("YYYY-MM-DD HH:MM:ss");
-							var endDate = view.intervalEnd.format("YYYY-MM-DD HH:MM:ss");
-							recupererVisites(startDate, endDate);
-							console.log("Du " + startDate + " au " + endDate);
-							$("#calendrier").fullCalendar("removeEvents");
-							$("#calendrier").fullCalendar("addEventSource", get_visites());
-							$("#calendrier").fullCalendar("refetchEvents");
+							current_view = view;
+							recupererVisites();
 					},
 				
 					eventRender: function(event, element) {
