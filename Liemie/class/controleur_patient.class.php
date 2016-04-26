@@ -27,7 +27,52 @@ class controleur_patient extends controleur
 				';
 		return $retour;
 	}
+	public function affiche_liste_patients($type) {
+		if ($type == 'Supp') {
+			$titreform = 'Suppression patient';
+		}
+		if ($type == 'Modif') {
+			$titreform = 'Modification patient';
+		}
+		$retour = '
+				<style type="text/css">
+    			table {border-collapse: collapse;}
+				tr:nth-of-type(odd) {background: #eee;}
+				tr:nth-of-type(even) {background: #eff;}
+				tr{color: black;}
+				th {background: #333;color: white;}
+				td, th {padding: 6px;border: 1px solid #ccc;}
+				</style>
+				<article >
+				<h3>' . $titreform . '</h3><form method="post">
+    	<table>
+    		<thead>
+        		<tr>
+            		<th >Identifiant</th>
+            		<th >Nom</th>
+            		<th >Prénom</th>
+    				<th ></th>
+        		</tr>
+    		</thead>
+    		<tbody >';
+		$result = $this->vpdo->liste_patients ();
+		if ($result != false) {
+			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
+			// parcourir chaque ligne sélectionnée
+			{
 	
+				$retour = $retour . '<tr>
+    			<td>' . $row->EMAIL . '</td>
+    			<td>' . $row->NOM . '</td>
+    			<td>' . $row->PRENOM . '</td>
+    
+    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="nom_checkbox[]" value="' . $row->ID_PATIENT . '" /></td>
+    			</tr>';
+			}
+		}
+		$retour = $retour . '</tbody></table></form></article>';
+		return $retour;
+	}
 	public function retourne_formulaire_patient($type, $idpatient= "") {
 		$form = '';
 		$nom = '';
