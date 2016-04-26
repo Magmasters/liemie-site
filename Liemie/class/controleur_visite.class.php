@@ -162,6 +162,11 @@ class controleur_visite extends controleur {
 						}
 						calendrier.fullCalendar("unselect");
 					},
+					/*
+					* Evènement javascript exécuté lors du clic sur un évènement (visite) du calendrier
+					* On fait une requete POST à la page "recherche_visites.php" avec l\'id
+					* de la visite sur laquelle l\'utilisateur a cliqué.
+					*/
 					 eventClick: function(event) {
         				if (event.id) {
 							$.ajax({
@@ -170,12 +175,14 @@ class controleur_visite extends controleur {
 						        type: "POST",
 								async: false,
 						        data: {
-									id_visite : event.id,
+									idvisite : event.id,
 								},
 						        success: function(data){
 									//data.visite : tableau json avec les données de la visite retournée
-									$("#date_visite").val(data.);
-									$("#heure_visite").val(data.);
+									//console.log(data);
+									var tabDateHeure = data.visite.start.split(" ");
+									$("#date_visite").val(tabDateHeure[0]);
+									$("#heure_visite").val(tabDateHeure[1]);
 							
 						        }
 							});

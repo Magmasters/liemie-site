@@ -1,4 +1,5 @@
 <?php
+//NON UTILISE
 session_start ();
 
 include_once ('../class/autoload.php');

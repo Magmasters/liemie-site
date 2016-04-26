@@ -833,6 +833,20 @@ class mypdo extends PDO {
 		return false;
 	}
 	
+	public function infos_visite($idvisite)
+	{
+		$statement = 'SELECT * FROM VISITE WHERE ID_VISITE = :idvisite';
+		$sth = $this->connexion->prepare ( $statement );
+		
+		$sth->bindParam(":idvisite", $idvisite, PDO::PARAM_INT);
+		
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			return $sth;
+		}
+		
+		return false;
+	}
+	
 	public function retourneInfosVisite($idVisite)
 	{
 		$statement = 'SELECT * FROM VISITE WHERE ID_VISITE = :idVisite';
