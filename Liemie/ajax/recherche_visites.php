@@ -49,7 +49,6 @@ if (isset($_SESSION ['type']) && ($_SESSION ['type'] === "admin" || $_SESSION['t
 			$tab_visite['description'] .= " Patient : ".$patient->nom." ".$patient->prenom;
 			$tab_visite['description'] .= " Date : ".$objVisite->DATE_VISITE;
 			$tab_visite['start'] = $objVisite->DATE_VISITE;
-			$tab_visite['end'] = $objVisite->DATE_VISITE;
 			$tab_visite['allDay'] = false;
 			
 			$data['visite'] = $tab_visite;

@@ -6,6 +6,9 @@ include_once ('../class/autoload.php');
 $data = array ();
 $data ['incomplete_results'] = false;
 
+/*
+ * Seul un compte ADMIN a l'autorisation de faire une recherche de PATIENT ou INFIRMIER
+ */
 if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	
 	$champ = "NOM";
@@ -24,7 +27,10 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 
 echo json_encode ( $data );
 
-//fonction de recherche faisant appel à la classe mypdo (PDO)
+/*
+ * fonction de recherche faisant appel à la classe mypdo (PDO)
+ * On utilise la référence vers $data pour y ajouter les données
+ */
 function rechercher_infirmier(&$data, $champ, $critere, $debut, $fin) {
 
 	$mypdo = new mypdo ();
@@ -52,6 +58,10 @@ function rechercher_infirmier(&$data, $champ, $critere, $debut, $fin) {
 	}
 }
 
+/*
+ * fonction de recherche faisant appel à la classe mypdo (PDO)
+ * On utilise la référence vers $data pour y ajouter les données
+ */
 function rechercher_patient(&$data, $champ, $critere, $debut, $fin) {
 
 	$mypdo = new mypdo ();

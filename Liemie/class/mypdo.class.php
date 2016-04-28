@@ -216,6 +216,33 @@ class mypdo extends PDO {
 		return json_encode ( $tab_soins );
 	}
 	
+	/*
+	 * Retourne un tableau de soins correspondant à un critère
+	 * de recherche.
+	 */
+	public function recherche_soins($champ, $critere, $debut, $fin) {
+		$tab_soins = array ();
+		$statement = 'SELECT * FROM SOIN WHERE LIBELLE_SOIN LIKE :critere LIMIT :debut, :fin';
+		$sth = $this->connexion->prepare ( $statement );
+		
+		$critere = "%".$critere."%";
+		$sth->bindParam(":critere", $critere, PDO::PARAM_STR);
+		$sth->bindParam(":debut", $debut, PDO::PARAM_INT);
+		$sth->bindParam(":fin", $fin, PDO::PARAM_INT);
+		
+		if ($sth->execute () && $sth->rowCount () > 0) {
+			while ( $soin = $sth->fetchObject () ) {
+				$tab_soins [$soin->ID_SOIN] [id_type_soin] = $soin->ID_TYPE_SOIN;
+				$tab_soins [$soin->ID_SOIN] [libelle_soin] = $soin->LIBELLE_SOIN;
+				$tab_soins [$soin->ID_SOIN] [text] = $soin->LIBELLE_SOIN;
+				$tab_soins [$soin->ID_SOIN] [description] = $soin->DESCRIPTION;
+			}
+			$sth->closeCursor ();
+		}
+	
+		return $tab_soins;
+	}
+	
 	public function retourne_infos_infirmier($tab)
 	{
 		$tab_infirmier = array ();
