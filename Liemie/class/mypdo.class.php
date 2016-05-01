@@ -18,7 +18,6 @@ class mypdo extends PDO {
 			echo 'Erreur : ' . $e->getMessage () . '<br />';
 			echo 'N° : ' . $e->getCode ();
 			$this->connexion = false;
-			// echo '<script>alert ("pbs acces bdd");</script>)';
 		}
 	}
 	public function __get($propriete)
