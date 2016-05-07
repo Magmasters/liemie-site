@@ -28,6 +28,7 @@ $site->right_sidebar = $site->rempli_right_sidebar ();
 /*
  * Si l'utilisateur connecté est un ADMIN il peut visualiser TOUTES les visites
  * 					//			 un INFIRMIER il ne peut visualiser que les visites LE CONCERNANT
+ * 					//			 un PATIENT il ne peut visualiser que les visites LE CONCERNANT
  */
 $site->left_sidebar = $controleur->retourne_liste_visites ();
 

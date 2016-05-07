@@ -654,8 +654,7 @@ class mypdo extends PDO {
 	
 	public function maj_patient($tab)
 	{
-	
-		$statement = 'UPDATE PATIENT SET NOM = :nom, PRENOM = :prenom, EMAIL = :email, DATE_NAISSANCE = :date_naiss, TEL1 = :tel1, TEL2 = :tel2, TEL3 = :tel3, LIEN_PHOTO = :lien_photo WHERE ID_PATIENT= :id_patient';
+		$statement = 'UPDATE PATIENT SET NOM = :nom, PRENOM = :prenom, EMAIL = :email, DATE_NAISSANCE = :date_naiss, TEL1 = :tel1, TEL2 = :tel2, TEL3 = :tel3 WHERE ID_PATIENT = :id_patient';
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':id_patient', $tab['id_patient'], PDO::PARAM_INT);
 		$sth->bindParam(':nom', $tab['nom'], PDO::PARAM_STR);
@@ -665,10 +664,9 @@ class mypdo extends PDO {
 		$sth->bindParam(':tel1', $tab['tel1'], PDO::PARAM_STR);
 		$sth->bindParam(':tel2', $tab['tel2'], PDO::PARAM_STR);
 		$sth->bindParam(':tel3', $tab['tel3'], PDO::PARAM_STR);
-		$sth->bindParam(':lien_photo', $tab['lien_photo'], PDO::PARAM_STR);
 	
 		/*
-		 * Requête passée avec succés, patient ajouté
+		 * Requête passée avec succés, infos du patient mises à jour
 		 */
 		if ($sth->execute() && $sth->rowCount() > 0) {
 			return true;

@@ -19,7 +19,6 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	$tab_patient ['tel1'] = $_POST ['tel1'];
 	$tab_patient ['tel2'] = $_POST ['tel2'];
 	$tab_patient ['tel3'] = $_POST ['tel3'];
-	$tab_infirmier ['lien_photo'] = ''; // Pas de lien photo
 	
 	//Adresse
 	$tab_adresse ['num_rue'] = $_POST ['adresse1'];
@@ -34,14 +33,16 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 		$data ['success'] = true;
 		$data ['message'][0] = "Informations du patient ". $_POST['nom']. " " . $_POST['prenom'] . " mises à jour avec succés.";
 	} else {
-		$errors ['message'][0] = 'Erreur lors de la modification des informations du patient !';
+		$errors ['message'][0] = 'Les infirmations du patient n\'ont pas été mises à jour. 
+				Note : Pour qu\'une modification soit acceptée au moins un des champs doit être modifié.';
 	}
 	
 	$resultat_adresse = $mypdo->maj_adresse_patient ( $tab_adresse );
 	if (isset ( $resultat_adresse ) && $resultat_adresse) {
 		$data ['message'][1] = "Adresse du patient ". $_POST['nom']. " " . $_POST['prenom'] . " mise à jour avec succés.";
 	} else {
-		$errors ['message'][1] = 'Erreur lors de la mise à jour l\'adresse du patient !';
+		$errors ['message'][1] = 'L\'addresse du patient n\'a pas été mise à jour. 
+				Note : Pour que celle-ci soit mise à jour, au moins un des champs de l\'adresse doit être modifié.';
 	}
 	
 	if (! empty ( $errors )) {

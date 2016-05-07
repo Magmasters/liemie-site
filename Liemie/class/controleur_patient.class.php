@@ -27,12 +27,24 @@ class controleur_patient extends controleur
 				';
 		return $retour;
 	}
+
+	
 	public function affiche_liste_patients($type) {
-		if ($type == 'Supp') {
-			$titreform = 'Suppression patient';
+	
+		$info = "";
+		$libelbutton = "Valider";
+	
+		if ($type === 'Supp') {
+			$titreform = 'Suppression de patient';
+			$info = 'Cette page vous permet d\'effectuer une recherche parmis
+						les patients existants et de supprimer le profil souhaité.';
+			$libelbutton = "Supprimer";
 		}
-		if ($type == 'Modif') {
-			$titreform = 'Modification patient';
+		if ($type === 'Modif') {
+			$titreform = 'Modification de patient';
+			$info = 'Cette page vous permet d\'effectuer une recherche parmis
+						les patients existants et de modifier le profil souhaité.';
+			$libelbutton = "Modifier";
 		}
 		$retour = '
 				<style type="text/css">
@@ -43,36 +55,88 @@ class controleur_patient extends controleur
 				th {background: #333;color: white;}
 				td, th {padding: 6px;border: 1px solid #ccc;}
 				</style>
-				<article >
-				<h3>' . $titreform . '</h3><form method="post">
-    	<table>
-    		<thead>
-        		<tr>
-            		<th >Identifiant</th>
-            		<th >Nom</th>
-            		<th >Prénom</th>
-    				<th ></th>
-        		</tr>
-    		</thead>
-    		<tbody >';
-		$result = $this->vpdo->liste_patient ();
-		if ($result != false) {
-			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
-			// parcourir chaque ligne sélectionnée
-			{
+				<h3>' . $titreform . '</h3>
+				<div class="alert alert-info">
+						'. $info .'
+				</div>
+				<form method="post">
+					<fieldset class="form-group">
+						<label for="idpatient">Patient</label>
+						<select name="idpatient" id="idpatient" class="js-data-example-ajax">
+							<option>Saisissez un nom de patient</option>
+						</select>
+					</fieldset >
+			
+					<fieldset class="form-group">
+						<input id="submit" type="submit" class="btn btn-default" value="' . $libelbutton . '">
+					</fieldset>
+				</form>
 	
-				$retour = $retour . '<tr>
-    			<td>' . $row->EMAIL . '</td>
-    			<td>' . $row->NOM . '</td>
-    			<td>' . $row->PRENOM . '</td>
-    
-    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="nom_checkbox[]" value="' . $row->ID_PATIENT . '" /></td>
-    			</tr>';
-			}
-		}
-		$retour = $retour . '</tbody></table></form></article>';
+					<script>
+							//Mise en forme de l\'affichage des élèments dans le champ de sélection
+							function formatVisite (patient) {
+							  if (patient.loading) return patient.text;
+		
+							  var markup = "<div class=\'select2-result-repository clearfix\'>" +
+								"<div class=\'select2-result-repository__avatar\'><img src=\'" + patient.avatar_url + "\' /></div>" +
+								"<div class=\'select2-result-repository__meta\'>" +
+								  "<div class=\'select2-result-repository__title\'>" + patient.full_name + "</div>";
+		
+							  markup += "</div></div>";
+		
+							  return markup;
+							}
+		
+							function formatVisiteSelection (patient) {
+							  return patient.full_name || patient.text;
+							}
+	
+							$("#idpatient").select2({
+								  ajax: {
+									url: "ajax/recherche_patient_infirmier.php",
+									dataType: "json",
+									type: "POST",
+									delay: 500,
+									data: function (params) {
+									  return {
+										q: params.term, // search term
+										page: params.page,
+										type: "patient", //spécifier le type recherché ("infirmier" ou "patient")
+									  };
+									},
+									processResults: function (data, params) {
+									  // parse the results into the format expected by Select2
+									  // since we are using custom formatting functions we do not need to
+									  // alter the remote JSON data, except to indicate that infinite
+									  // scrolling can be used
+									  params.page = params.page || 0;
+		
+									  return {
+										results: data.items,
+										pagination: {
+										  more: (params.page * 3) < data.total_count
+										}
+									  };
+									},
+									cache: true
+								  },
+								  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+								  minimumInputLength: 3,
+								  templateResult: formatVisite,
+								  templateSelection: formatVisiteSelection
+							});
+	
+							$("#idpatient").on("select2:select", function(e) {
+								$idpatient = e.params.data.id;
+							});
+					</script>
+	
+	
+				';
+	
 		return $retour;
 	}
+	
 	public function retourne_formulaire_patient($type, $idpatient= "") {
 		$form = '';
 		$nom = '';
@@ -92,15 +156,15 @@ class controleur_patient extends controleur
 			$libelbutton = 'Ajouter';
 		}
 		if ($type == 'Demand') {
-			$titreform = 'Formulaire Demande Inscription patient';
+			$titreform = 'Formulaire d\'inscription de patient';
 			$libelbutton = 'Soumettre';
 		}
 		if ($type == 'Supp') {
-			$titreform = 'Formulaire Suppression inscription';
+			$titreform = 'Formulaire de suppression de patient';
 			$libelbutton = 'Supprimer';
 		}
 		if ($type == 'Modif') {
-			$titreform = 'Formulaire Modification patient';
+			$titreform = 'Formulaire de modification d\'un patient';
 			$libelbutton = 'Modifier';
 		}
 		if ($type == 'Supp' || $type == 'Modif') {
@@ -131,7 +195,7 @@ class controleur_patient extends controleur
 		$form = '
 			<article >
 				<h3>' . $titreform . '</h3>
-				<form id="form_patient" method="post" role="form" class="formulaire-patient" >';
+				<form id="form_patient" method="post" role="form" class="formulaire-infirmier" >';
 		if ($type == 'Ajout' || $type == 'Demand') {
 			$vmp = $this->genererMDP ();
 			$form = $form . '
@@ -262,7 +326,7 @@ class controleur_patient extends controleur
 	
 			var formData = {
 				"mp"					: $mdp,
-				"nom" 					: $("#nom").val().toUpperCase(),
+				"nom" 					: $("#nom").val(),
 				"prenom"				: $("#prenom").val(),
 				"adresse1"				: $("#adresse1").val(),
 				"adresse2"				: $("#adresse2").val(),

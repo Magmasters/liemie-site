@@ -1347,11 +1347,21 @@ class controleur {
 	}
 	
 	public function affiche_liste_infirmiers($type) {
-		if ($type == 'Supp') {
+		
+		$info = "";
+		$libelbutton = "Valider";
+		
+		if ($type === 'Supp') {
 			$titreform = 'Suppression infirmier';
+			$info = 'Cette page vous permet d\'effectuer une recherche parmis
+						les infirmiers existants et de supprimer le profil souhaité.';
+			$libelbutton = "Supprimer";
 		}
-		if ($type == 'Modif') {
+		if ($type === 'Modif') {
 			$titreform = 'Modification infirmier';
+			$info = 'Cette page vous permet d\'effectuer une recherche parmis
+						les infirmiers existants et de modifier le profil souhaité.';
+			$libelbutton = "Modifier";
 		}
 		$retour = '
 				<style type="text/css">
@@ -1362,34 +1372,87 @@ class controleur {
 				th {background: #333;color: white;}
 				td, th {padding: 6px;border: 1px solid #ccc;}
 				</style>
-				<article >
-				<h3>' . $titreform . '</h3><form method="post">
-    	<table>
-    		<thead>
-        		<tr>
-            		<th >Identifiant</th>
-            		<th >Nom</th>
-            		<th >Prénom</th>
-    				<th ></th>
-        		</tr>
-    		</thead>
-    		<tbody >';
-		$result = $this->vpdo->liste_infirmiers ();
-		if ($result != false) {
-			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) ) 
-			// parcourir chaque ligne sélectionnée
-			{
+				<h3>' . $titreform . '</h3>
+				<div class="alert alert-info">
+						'. $info .'
+				</div>
+				<form method="post">
+					<fieldset class="form-group">
+						<label for="idinfirmier">Infirmier</label>
+						<select name="idinfirmier" id="idinfirmier" class="js-data-example-ajax">
+							<option>Saisissez un nom d\'infirmier</option>
+						</select>
+					</fieldset >
+					
+					<fieldset class="form-group">
+						<input id="submit" type="submit" class="btn btn-default" value="' . $libelbutton . '">
+					</fieldset>
+				</form>
 				
-				$retour = $retour . '<tr>
-    			<td>' . $row->EMAIL . '</td>
-    			<td>' . $row->NOM . '</td>
-    			<td>' . $row->PRENOM . '</td>
-    			
-    			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="nom_checkbox[]" value="' . $row->ID_INFIRMIER . '" /></td>
-    			</tr>';
-			}
-		}
-		$retour = $retour . '</tbody></table></form></article>';
+					<script>
+							//Mise en forme de l\'affichage des élèments dans le champ de sélection
+							function formatVisite (infirmier) {
+							  if (infirmier.loading) return infirmier.text;
+			
+							  var markup = "<div class=\'select2-result-repository clearfix\'>" +
+								"<div class=\'select2-result-repository__avatar\'><img src=\'" + infirmier.avatar_url + "\' /></div>" +
+								"<div class=\'select2-result-repository__meta\'>" +
+								  "<div class=\'select2-result-repository__title\'>" + infirmier.full_name + "</div>";
+			
+							  markup += "</div></div>";
+			
+							  return markup;
+							}
+			
+							function formatVisiteSelection (infirmier) {
+							  return infirmier.full_name || infirmier.text;
+							}
+				
+							$("#idinfirmier").select2({
+								  ajax: {
+									url: "ajax/recherche_patient_infirmier.php",
+									dataType: "json",
+									type: "POST",
+									delay: 500,
+									data: function (params) {
+									  return {
+										q: params.term, // search term
+										page: params.page,
+										type: "infirmier", //spécifier le type recherché ("infirmier" ou "patient")
+									  };
+									},
+									processResults: function (data, params) {
+									  // parse the results into the format expected by Select2
+									  // since we are using custom formatting functions we do not need to
+									  // alter the remote JSON data, except to indicate that infinite
+									  // scrolling can be used
+									  params.page = params.page || 0;
+			
+									  return {
+										results: data.items,
+										pagination: {
+										  more: (params.page * 3) < data.total_count
+										}
+									  };
+									},
+									cache: true
+								  },
+								  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+								  minimumInputLength: 3,
+								  templateResult: formatVisite,
+								  templateSelection: formatVisiteSelection
+							});
+				
+							$("#idinfirmier").on("select2:select", function(e) {
+							    //console.log(e.params);
+								//console.log(e.params.data.id);
+								$idinfirmier = e.params.data.id;
+							});
+					</script>
+				
+				
+				';
+		
 		return $retour;
 	}
 	
