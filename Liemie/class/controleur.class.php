@@ -299,9 +299,9 @@ class controleur {
 				';
 	}
 	
-	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ) {
+	public function retourne_formulaire_reinit_mdp($idjeton, $user, $categ, $date) {
 	
-		if (!$this->vpdo->validite_jeton($idjeton, $user, $categ)) {
+		if (!$this->vpdo->validite_jeton($idjeton, $user, $categ, $date)) {
 			return '
 						<div class="alert alert-danger">
 							<p> Jeton invalide </p>
@@ -362,9 +362,10 @@ class controleur {
 	
 		var $url="ajax/valide_reinit_mdp.php";
 	
-		$idjeton = '. json_encode($idjeton) .'
-		$user = '. json_encode($user) .'
-		$categ = '. json_encode($categ) .'
+		$idjeton = '. json_encode($idjeton) .';
+		$user = '. json_encode($user) .';
+		$categ = '. json_encode($categ) .';
+		$date = '. json_encode($date) .';
 	
 		if($("#login_oubli").valid())
 		{
@@ -374,6 +375,7 @@ class controleur {
 	   			"categ"					: $categ,
 				"idjeton" 				: $idjeton,
 				"user"					: $user,
+				"date"					: $date,
 			};
 	
 			var filterDataRequest = $.ajax(
@@ -409,7 +411,15 @@ class controleur {
 				else
 				{
 						$msg="";
-						if(data.message){$msg+="</br>";$x=data.message;$msg+=$x;}
+						if(data.message){
+							$msg+="</br>";
+							$x=data.message;$msg+=$x;
+						}
+				
+						window.setTimeout(function(){
+							//après 3 sec on redirige vers la page index.php
+							window.location.href = "index.php";			
+						}, 3000);
 				}
 	
 					$("#dialog1").html($msg);$("#modal").show();

@@ -49,8 +49,9 @@ if (isset($_GET['jeton'])) {
 	$idjeton = $parametres['jeton'];
 	$user = $parametres['user'];
 	$categ = $parametres['utype'];
+	$date = $parametres['date'];
 	
-	$site->left_sidebar = $controleur->retourne_formulaire_reinit_mdp ($idjeton, $user, $categ);
+	$site->left_sidebar = $controleur->retourne_formulaire_reinit_mdp ($idjeton, $user, $categ, $date);
 	
 } else {
 	$site->left_sidebar = $controleur->retourne_formulaire_mdp_oublie ();

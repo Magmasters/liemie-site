@@ -16,6 +16,7 @@ $tab ['idjeton'] = $_POST ['idjeton'];
 $tab ['mdp'] = $_POST ['mdp'];
 $tab ['mdp2'] = $_POST ['mdp2'];
 $tab ['categ'] = $_POST ['categ'];
+$tab ['date'] = $_POST ['date'];
 
 if (strlen($tab['mdp']) < 8) {
 	array_push($errors ['message'], "Le mot de passe doit comporter au moins 8 caractères.");	
@@ -36,7 +37,7 @@ if (! empty ( $errors['message'] )) {
 	$data ['errors'] = $errors;
 } else {
 	$data ['success'] = true;
-	$data ['message'] = "Votre mot de passe a été réinitialisé !";
+	$data ['message'] = "Votre mot de passe a été réinitialisé. Vous allez être redirigé vers la page d'accueil.";
 }
 echo json_encode ( $data );
 ?>

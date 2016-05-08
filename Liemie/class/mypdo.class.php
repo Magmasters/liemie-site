@@ -51,7 +51,7 @@ class mypdo extends PDO {
 	public function reinit_mdp($tab)
 	{
 		
-		$hash_jeton = md5($tab['user'].''.$tab['idjeton'].''.$tab['categ']);
+		$hash_jeton = md5($tab['user'].''.$tab['idjeton'].''.$tab['categ'].''.$tab['date']);
 		
 		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
 		$sth = $this->connexion->prepare($statement);
@@ -121,17 +121,22 @@ class mypdo extends PDO {
 			if ($sth->execute() && $sth->rowCount() > 0) {
 				$idjeton = $this->connexion->lastInsertId();
 				
-				$jeton = 'utype='.$tab ['categ'].'&user='.$user->EMAIL.'&jeton='.$idjeton;
+				$date = new DateTime();
+				$date->setTimestamp(time());
+				$datetime = $date->format('Y-m-d H:i:s');
+				
+				$jeton = 'utype='.$tab ['categ'].'&user='.$user->EMAIL.'&jeton='.$idjeton.'&date='.$datetime;
 				$jeton_crypte = Cryptage::mc_encrypt($jeton);
 				
 				$lien = 'http://'.$_SERVER['HTTP_HOST'].'/Liemie/restitution_mdp.php?jeton='.$jeton_crypte;
 				
-				$hash_jeton = md5($user->EMAIL.''.$idjeton.''.$tab ['categ']);
+				$hash_jeton = md5($user->EMAIL.''.$idjeton.''.$tab ['categ'].''.$datetime);
 				
-				$statement = 'UPDATE JETON SET LIEN=:lien WHERE ID_JETON=:idjeton';
+				$statement = 'UPDATE JETON SET LIEN=:lien, DATE_JETON=:date WHERE ID_JETON=:idjeton';
 				$sth = $this->connexion->prepare ( $statement );
-				$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_STR);
+				$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_INT);
 				$sth->bindParam(':lien', $hash_jeton, PDO::PARAM_STR);
+				$sth->bindParam(':date', $datetime, PDO::PARAM_STR);
 				
 				if ($sth->execute() && $sth->rowCount() > 0) {
 					
@@ -576,15 +581,33 @@ class mypdo extends PDO {
 		}
 	}
 	
-	public function validite_jeton($idjeton, $user, $categ)
+	public function validite_jeton($idjeton, $user, $categ, $date)
 	{
-		$hash_jeton = md5($user.''.$idjeton.''.$categ);
+		$hash_jeton = md5($user.''.$idjeton.''.$categ.''.$date);
 		$statement = 'SELECT * FROM JETON WHERE ID_JETON=:idjeton AND LIEN=:lien';
 		$sth = $this->connexion->prepare($statement);
 		$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_INT);
 		$sth->bindValue(':lien', $hash_jeton);
 		
 		if ($sth->execute() && $sth->rowCount() > 0) {
+			
+			$datetime_jeton = $sth->fetchObject()->DATE_JETON;
+			
+			$datetime_timestamp  = strtotime($datetime_jeton);
+			$now = time();
+			//La durée de validité du jeton est de 24 heures
+			
+			if ($now >= ($datetime_timestamp + 3600*24))
+			{
+				$statement = "DELETE FROM JETON WHERE ID_JETON=:idjeton";
+				$sth = $this->connexion->prepare($statement);
+				$sth->bindParam(':idjeton', $idjeton, PDO::PARAM_INT);
+				
+				$sth->execute();
+				
+				return false;
+			}
+			
 			return true;
 		}
 		
