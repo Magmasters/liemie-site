@@ -6,11 +6,13 @@ class page_base {
 	protected $modal_login;
 	protected $js = array (
 			'jquery-2.1.4.min',
-			'bootstrap.min' 
+			'bootstrap.min'
 	);
 	protected $css = array (
 			'bootstrap.min',
-			'perso'
+			'bootstrap_edit.min',
+			'perso',
+			'freelancer',
 	);
 	protected $page;
 	protected $metadescription = "Kaliémie";
@@ -102,30 +104,24 @@ class page_base {
 	 * **************************** Affichage de la partie entÃªte **************************************
 	 */
 	protected function affiche_entete() {
-		echo '<header class="page-header hidden-xs hidden-sm">
-				<div class="row">
-    				<div class="col-xs-12">
-						<h1>
-							Kaliémie
-						</h1>
-						<h3>
-							<strong>Visites médicales</strong>
-						</h3>
- 					</div>
-				</div>
-			</header>
-			<header class="page-header hidden-md hidden-lg">
-				<div class="row">
-    				<div class="col-xs-12">
-						<h1>
-							Kaliémie
-						</h1>
-						<h3>
-							<strong>Visites médicales</strong>
-						</h3>
- 					</div>
-				</div>
-            </header>';
+		
+		echo '
+		    <!-- Header -->
+		    <header>
+		        <div class="container">
+		            <div class="row">
+		                <div class="col-lg-12">
+		                    <img class="img-responsive img-logo" src="image/logo.png" alt="">
+		                    <div class="intro-text">
+		                        <span class="name">KALIEMIE</span>
+		                        <hr class="star-light"> 
+								<span class="skills">Visites médicales</span>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </header>	
+		';
 	}
 	/**
 	 * **************************** Affichage du menu **************************************
@@ -162,7 +158,7 @@ class page_base {
 	public function affiche_entete_menu() {
 		echo '
 		<div id="menu_horizontal">
-			<nav class="navbar navbar-inverse">
+			<nav class="navbar navbar-default">
 				<div class="container-fluid">
 				    <div class="navbar-header">
       					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  data-target="#monmenu" aria-expanded="false">
@@ -171,7 +167,7 @@ class page_base {
         					<span class="icon-bar"></span>
         					<span class="icon-bar"></span>
       					</button>
-						<p class="visible-xs navbar-text"><mark>Menu</mark></p>
+						<p class="visible-xs navbar-text">Menu</p>
     				</div>
 					<div class="collapse navbar-collapse" id="monmenu">
 				';
@@ -202,22 +198,11 @@ class page_base {
 	 */
 	private function affiche_footer() {
 		echo '
-		<!-- Footer -->
-		<footer class="footer-basic-centered">
-
-			<p class="footer-company-motto">Liemie Magmasters</p>
-
-			<p class="footer-links">
-				<a href="#">Accueil</a>
-				<a href="#">L\'Equipe</a>
-				<a href="#">A propos</a>
-				<a href="#">Contact</a>
-			</p>
-
-			<p class="footer-company-name">Magmasters &copy; 2015</p>
-
-		</footer>
-		';
+			<footer class="bottom">
+				<div class="container">
+					<p class="text-center">Magmasters - Kaliemie 2016.</p>
+				</div>
+			</footer>';
 	}
 	
 	/**
@@ -234,6 +219,9 @@ class page_base {
 
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -246,8 +234,11 @@ class page_base {
 					<?php $this->affiche_style(); ?>
 				</head>
 <body>
-	<div class="global container-fluid">
 
+   <!-- Wrap all page content here -->
+    <div id="wrap">
+	<div class="global container-fluid">
+	
 		<?php $this->affiche_entete(); ?>
 		<?php $this->affiche_entete_menu(); ?>
 		<?php $this->affiche_menu(); ?>
@@ -255,7 +246,7 @@ class page_base {
 		<?php $this->affiche_footer_menu(); ?>
 						
 		<div class="row">
-			<div class="col-md-10">
+			<div class="col-md-12">
 				<?php echo $this->left_sidebar; ?>
 			</div>
 		<!--  <div class="row">
@@ -266,6 +257,7 @@ class page_base {
 		-->
 		</div>
 		<?php $this->affiche_footer(); ?>
+	</div>
 	</div>
 </body>
 </html>

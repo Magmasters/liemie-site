@@ -80,10 +80,10 @@ class controleur {
 		while ($article = $articles->fetchObject())
 		{
 			$retour = $retour. '
-			<article>
+			<div class="well">
 				<h2>'.$article->TITRE.'</h2>
 				'.$article->CONTENU.'
-			</article>
+			</div>
 			';
 		}
 		
@@ -158,6 +158,8 @@ class controleur {
 					
 				
 					<script>
+				
+					$("#modalConnexion").appendTo("body");
 				
 					function home(){ document.location.href="index.php";}
 				

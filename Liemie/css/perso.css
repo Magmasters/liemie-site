@@ -22,13 +22,6 @@
 	max-width: 300px;
 }
 
-footer {
-	margin-top: 50px;
-	position: relative;
-	bottom: 0;
-	left: 0;
-}
-
 .dropdown-submenu {
 	position: relative;
 }
@@ -75,64 +68,6 @@ footer {
 	-webkit-border-radius: 6px 0 6px 6px;
 	-moz-border-radius: 6px 0 6px 6px;
 	border-radius: 6px 0 6px 6px;
-}
-
-.footer-basic-centered {
-	background-color: #292c2f;
-	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
-	box-sizing: border-box;
-	width: 100%;
-	text-align: center;
-	font: normal 18px sans-serif;
-	padding: 20px;
-	margin-top: 80px;
-}
-
-.footer-basic-centered .footer-company-motto {
-	color: #8d9093;
-	font-size: 16px;
-	margin: 0;
-}
-
-.footer-basic-centered .footer-company-name {
-	color: #8f9296;
-	font-size: 14px;
-	margin: 0;
-}
-
-.footer-basic-centered .footer-links {
-	font-size: 14px;
-	list-style: none;
-	font-weight: bold;
-	color: #ffffff;
-	padding: 15px 0 16px;
-	margin: 0;
-}
-
-.footer-basic-centered .footer-links a {
-	display: inline-block;
-	text-decoration: none;
-	color: inherit;
-}
-
-/* If you don't want the footer to be responsive, remove these media queries */
-@media ( max-width : 600px) {
-	.footer-basic-centered {
-		padding: 10px;
-	}
-	.footer-basic-centered .footer-company-motto {
-		font-size: 12px;
-	}
-	.footer-basic-centered .footer-company-name {
-		font-size: 12px;
-	}
-	.footer-basic-centered .footer-links {
-		font-size: 12px;
-		padding: 10px 0 14px;
-	}
-	.footer-basic-centered .footer-links a {
-		line-height: 1.1;
-	}
 }
 
 .no-border {
@@ -193,7 +128,68 @@ footer {
 	margin-top: 20px;
 }
 
-/*
-* Tableau responsive
-*/
+.img-logo {
+	max-width: 100px;
+}
 
+.container-fluid {
+	margin-left:0;
+	margin-right:0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+body {
+	background: url(../image/bg.jpg) no-repeat center center fixed; 
+	color: white;
+}
+
+@media ( max-width : 768px) {
+	.container-fluid>.navbar-header {
+	    margin-right: 15px;
+	    margin-left: 15px;
+	}
+	
+	.container-fluid>.navbar-collapse {
+	    margin-right: 15px;
+	    margin-left: 15px;
+	}
+}
+
+.modal {
+	color : black;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+footer {
+	background-color: grey;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	padding-top: 15px;
+}
+
+.well {
+	color : white;
+	padding-bottom: 10px;
+	padding-top: 20px;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 1.1em;
+	background-color: #172C3A;
+}
