@@ -30,18 +30,26 @@ if (isset($_SESSION ['type']) && $_SESSION ['type'] == 'admin' ) {
 	
 
 	$resultat = $mypdo->maj_infirmier ( $tab_infirmier );
-	if (isset ( $resultat ) && $resultat) {
+	if (isset ( $resultat ) && $resultat === true) {
 		$data ['success'] = true;
 		$data ['message'][0] = "Informations de l'infirmier ". $_POST['nom']. " " . $_POST['prenom'] . " mises à jour avec succés.";
 	} else {
-		$errors ['message'][0] = 'Erreur lors de la modification des informations de l\'infirmier !';
+		if ($resultat === false) {
+			$data ['message'][0] = "Une erreur est survenue lors de la mise à jour des informations de l'infirmier, veuillez réessayer !";
+		} else {
+			$data ['message'][0] = "Aucune modification n'a été apportée aux infirmations de l'infirmier. Pour qu'une modification soit prise en compte veuillez modifier au moins un des champs.";
+		}
 	}
 	
 	$resultat_adresse = $mypdo->maj_adresse_infirmier ( $tab_adresse );
-	if (isset ( $resultat_adresse ) && $resultat_adresse) {
+	if (isset ( $resultat_adresse ) && $resultat_adresse === true) {
 		$data ['message'][1] = "Adresse de l'infirmier ". $_POST['nom']. " " . $_POST['prenom'] . " mise à jour avec succés.";
 	} else {
-		$errors ['message'][1] = 'Erreur lors de la mise à jour l\'adresse de l\'infirmier !';
+			if ($resultat === false) {
+			$data ['message'][1] = "Une erreur est survenue lors de la mise à jour de l'adresse de l'infirmier, veuillez réessayer !";
+		} else {
+			$data ['message'][1] = "Aucune modification n'a été apportée à l'adresse. Pour qu'une modification de l'adresse soit prise en compte veuillez modifier au moins un des champs de l'adresse.";
+		}
 	}
 	
 	if (! empty ( $errors )) {

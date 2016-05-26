@@ -16,10 +16,10 @@ $site->right_sidebar = $site->rempli_right_sidebar ();
 
 if (isset ($_POST['type_article_a_modif'])) {
 	$type_articles = $_POST['type_article_a_modif'];
-	$site->left_sidebar = $controleur->affiche_liste_articles ( 'Modif',  $type_articles);	
-} else if (isset ( $_POST ["checkbox_nom"] )) {
-	foreach ( $_POST ["checkbox_nom"] as $index => $value ) {
-		$site->left_sidebar = $controleur->retourne_formulaire_article( 'Modif', $value );
+	$site->left_sidebar = $controleur->affiche_liste_articles ( 'Modif ordre',  $type_articles);	
+} else if (isset ( $_POST ["send"] )) {
+	foreach ( $_POST ["num_affichage"] as $index => $value ) {
+		
 	}
 } else {
 	$site->left_sidebar = $controleur->affiche_selecteur_type_article();	

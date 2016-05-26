@@ -884,27 +884,6 @@ class controleur {
 			});
 			filterDataRequest.done(function(data)
 			{
-				if ( ! data.success)
-				{
-						$msg="<ul>";
-						if (data.errors.message) {
-							$.each(data.errors.message, function(index, value) {
-								$msg+="<li>";
-								$msg+=value;
-								$msg+="</li>";
-							});
-						}
-						if (data.errors.requete) {
-							$x=data.errors.requete;
-							$msg+="<li>";
-							$msg+=$x;
-							$msg+="</li>";
-						}
-	
-						$msg+="</ul>";
-				}
-				else
-				{
 						$msg="<ul>";
 						if(data.message) {
 							$.each(data.message, function(index, value) {
@@ -914,7 +893,6 @@ class controleur {
 							});
 						}
 						$msg+="</ul>";
-				}
 	
 					$("#dialog1").html($msg);$("#modal").show();
 	
@@ -941,7 +919,7 @@ class controleur {
 			"prenom": {required: true},
 			"adresse1": {required: true},
 			"adresse2": {required: true},
-			"tel1": {required: true,regex: /^(\+33|0033|0)[0-9]{9}$/},
+			"tel1": {required: true,regex: /^(\+336|00336|06|07|00337|\+337)[0-9]{8}$/},
 			"tel2": {regex: /^(\+33|0033|0)[0-9]{9}$/},
 			"tel3": {regex: /^(\+33|0033|0)[0-9]{9}$/},
 			"cp":{required: true,regex:/^\d{5}$/},
@@ -965,6 +943,10 @@ class controleur {
 			"cp":
 			{
 				required: "Le code postal doit être composé de 5 chiffres"
+			},
+			"tel1":
+			{
+				required: "Le numéro de téléphone n\'est pas valide"
 			}
 		},
 		errorPlacement: function (error, element) {
@@ -1313,12 +1295,34 @@ class controleur {
 		return $form;
 	}
 	
-	public function affiche_liste_articles($type) {
-		if ($type == 'Supp') {
+	public function affiche_selecteur_type_article() {
+		$retour = '
+				<form id="form_article" method="post" role="form" >
+					<div class="form-group">
+					<label for="type_article">Sélectionnez le type de l\'article à modifier</label>
+					<select name="type_article_a_modif" id="type_article">
+						<option value="ACCUEIL">Accueil</option> 
+						<option value="EQUIPE">Equipe</option>
+						<option value="CONTACT">Contact</option>
+					</select>
+					</div>
+					
+					<input id="submit" type="submit" name="send" class="button" value="Suivant" />
+				</form>
+				';
+		
+		return $retour;
+	}
+	
+	public function affiche_liste_articles($type, $type_articles = "") {
+		if ($type === 'Supp') {
 			$titreform = 'Suppression article';
 		}
-		if ($type == 'Modif') {
+		if ($type === 'Modif') {
 			$titreform = 'Modification article';
+		}
+		if ($type === 'Modif ordre') {
+			$titreform = 'Ordre des articles';
 		}
 		$retour = '
 				<style type="text/css">
@@ -1340,21 +1344,52 @@ class controleur {
         		</tr>
     		</thead>
     		<tbody >';
-		$result = $this->vpdo->liste_articles ();
-		if ($result != false) {
-			while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
-			// parcourir chaque ligne sélectionnée
-			{
-	
-				$retour = $retour . '<tr>
+		$result = $this->vpdo->liste_articles ($type_articles);
+		if ($type === "Modif ordre") {
+			if ($result != false) {
+				while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
+				// parcourir chaque ligne sélectionnée
+				{
+			
+					$retour = $retour . '<tr>
     			<td>' . $row->TYPE . '</td>
     			<td>' . $row->TITRE . '</td>
-    
+			
+    			<td Align=center><input id="'.$row->ID_ARTICLE.'" onChange="modifOrdre(this)" type="number" name="num_affichage[]" value="' . $row->NUM_AFFICHAGE . '" /></td>
+    			</tr>
+    			<script>
+    			function modifOrdre($champ) {
+    					
+    			}
+    					</script>
+    			';
+				}
+			}
+		} else {
+			if ($result != false) {
+				while ( $row = $result->fetch ( PDO::FETCH_OBJ ) )
+				// parcourir chaque ligne sélectionnée
+				{
+			
+					$retour = $retour . '<tr>
+    			<td>' . $row->TYPE . '</td>
+    			<td>' . $row->TITRE . '</td>
+			
     			<td Align=center><input onClick="this.form.submit();" type="checkbox" name="checkbox_nom[]" value="' . $row->ID_ARTICLE . '" /></td>
     			</tr>';
+				}
 			}
 		}
-		$retour = $retour . '</tbody></table></form></article>';
+		if ($type === "Modif ordre") {
+			$retour .= '</tbody></table>
+						<input id="submit" type="submit" name="send" class="button" value="Valider" />
+						</form></article>
+					';
+			
+		} else {
+			$retour = $retour . '</tbody></table></form></article>';
+		}
+		
 		return $retour;
 	}
 	

@@ -340,14 +340,22 @@ class mypdo extends PDO {
 		$sth->bindParam(':lien_photo', $tab['lien_photo'], PDO::PARAM_STR);
 		
 		/*
-		 * Requête passée avec succés, infirmier ajouté
+		 * Requête passée ou non
 		 */
-		if ($sth->execute() && $sth->rowCount() > 0) {
-			return true;
+		$success = false;
+		if ($sth->execute()) {
+			$success = true;
+			
+			//requête validée mais pas de modification sur les champs
+			if($sth->rowCount() == 0) {
+				$success = "AUCUNE_MODIFICATION";
+			}
 		} else {
 			//Erreur lors de l'exécution de la requête.
-			return false;
+			$success = false;
 		}
+		
+		return $success;
 	}
 	
 	public function maj_adresse_infirmier($tab) {
@@ -365,12 +373,23 @@ class mypdo extends PDO {
 		$sth->bindParam(':cp', $tab['cp'], PDO::PARAM_STR);
 		$sth->bindParam(':id_adresse', $idadresse, PDO::PARAM_INT);
 		
-		if ($sth->execute() && $sth->rowCount() > 0) {
-			return true;
+		/*
+		 * Requête passée ou non
+		 */
+		$success = false;
+		if ($sth->execute()) {
+			$success = true;
+			
+			//requête validée mais pas de modification sur les champs
+			if($sth->rowCount() == 0) {
+				$success = "AUCUNE_MODIFICATION";
+			}
 		} else {
 			//Erreur lors de l'exécution de la requête.
-			return false;
+			$success = false;
 		}
+		
+		return $success;
 	}
 	
 	public function liste_infirmiers($champCritere='', $critere = '', $debut = 0, $fin = 0)
@@ -492,7 +511,7 @@ class mypdo extends PDO {
 	
 	public function retourne_article_par_type($type)
 	{
-		$statement = 'SELECT * FROM ARTICLES WHERE TYPE = :type';
+		$statement = 'SELECT * FROM ARTICLES WHERE TYPE = :type ORDER BY NUM_AFFICHAGE';
 		$sth = $this->connexion->prepare ( $statement );
 		$sth->bindParam ( ':type', $type, PDO::PARAM_STR );
 		if ($sth->execute () && $sth->rowCount () > 0) {
@@ -534,10 +553,16 @@ class mypdo extends PDO {
 		return false;
 	}
 	
-	public function liste_articles()
+	public function liste_articles($type_articles)
 	{
-		$statement = 'SELECT * FROM ARTICLES';
-		$sth = $this->connexion->prepare ( $statement );
+		if ($type_articles ==="") {
+			$statement = 'SELECT * FROM ARTICLES';
+			$sth = $this->connexion->prepare ( $statement );
+		} else {
+			$statement = 'SELECT * FROM ARTICLES WHERE TYPE = :type_articles';
+			$sth = $this->connexion->prepare ( $statement );
+			$sth->bindParam(":type_articles", $type_articles, PDO::PARAM_STR);
+		}
 		if ($sth->execute () && $sth->rowCount () > 0) {
 			return $sth;
 		}
